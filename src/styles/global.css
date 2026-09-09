@@ -1,9 +1,75 @@
 @import "./tokens.css";
 
+@font-face {
+  font-family: "Monocraft";
+  src: url("/fonts/Monocraft.woff2") format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/*
+ * Glitch text: any run of characters mid-scramble gets this. Swaps to the
+ * Minecraft pixel font and throws a red/cyan chromatic split that jitters
+ * on a stepped loop (colors fixed, offsets animated — same trick as the
+ * reference site). `.px` is only ever on transient spans / revealing
+ * headings, never resting body copy.
+ */
+.px {
+  font-family: var(--font-pixel);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  /* keeps the bitmap edges crunchy when the browser scales the glyphs */
+  text-rendering: optimizeSpeed;
+}
+
+.px.glitching {
+  animation: px-rgb 240ms steps(1, end) infinite;
+}
+
+@keyframes px-rgb {
+  0%,
+  100% {
+    text-shadow:
+      0.06em 0 0 var(--glitch-red),
+      -0.06em 0 0 var(--glitch-cyan);
+  }
+  20% {
+    text-shadow:
+      -0.09em 0.03em 0 var(--glitch-red),
+      0.09em -0.03em 0 var(--glitch-cyan);
+  }
+  40% {
+    text-shadow:
+      0.05em -0.05em 0 var(--glitch-red),
+      -0.05em 0.05em 0 var(--glitch-cyan);
+  }
+  60% {
+    text-shadow:
+      -0.04em -0.04em 0 var(--glitch-red),
+      0.04em 0.04em 0 var(--glitch-cyan);
+  }
+  80% {
+    text-shadow:
+      0.1em 0.02em 0 var(--glitch-red),
+      -0.1em -0.02em 0 var(--glitch-cyan);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .px,
+  .px.glitching {
+    font-family: inherit;
+    animation: none;
+    text-shadow: none;
+  }
 }
 
 html {

@@ -27,6 +27,13 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/fonts/Monocraft.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
@@ -58,5 +65,8 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
       <slot />
     </main>
     <Footer />
+    <script>
+      import "@/scripts/glitch.ts";
+    </script>
   </body>
 </html>

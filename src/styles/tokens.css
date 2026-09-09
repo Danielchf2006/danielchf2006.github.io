@@ -23,6 +23,13 @@
     Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo,
     Consolas, monospace;
+  /* Monocraft — a Minecraft-style pixel font (SIL OFL). Used only while text
+     is mid-glitch, never for resting copy. See public/fonts/. */
+  --font-pixel: "Monocraft", ui-monospace, monospace;
+
+  /* the chromatic-aberration pair, Andrew-style */
+  --glitch-red: #ff2d55;
+  --glitch-cyan: #33ccff;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;

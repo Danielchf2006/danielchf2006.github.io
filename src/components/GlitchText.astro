@@ -1,61 +1,55 @@
 ---
 /**
- * Text that scrambles through glyphs and resettles:
- *  - once, when it first scrolls into view (the reveal)
- *  - again on hover / focus, rendered mid-flight in an alternate typeface
+ * Headline text that "boots up" the first time it scrolls into view: the
+ * whole string churns through the Minecraft pixel font with a red/cyan
+ * chromatic split, then resolves left-to-right into the real text in the
+ * page's normal face.
+ *
+ * Cursor-local glitching (hovering any text) is handled globally by
+ * src/scripts/glitch.ts — this component is just the one-shot reveal.
  *
  * The real text is always the element's content (SEO, no-JS). Reduced-motion
- * viewers get the plain text and just the font swap on hover.
+ * viewers get the plain text with no animation.
  */
 interface Props {
   text: string;
   as?: keyof HTMLElementTagNameMap;
-  /** typeface to flip to while hovered */
-  hoverFont?: "mono" | "serif" | "sans" | "none";
   class?: string;
 }
-const {
-  text,
-  as: Tag = "span",
-  hoverFont = "mono",
-  class: className,
-}: Props = Astro.props;
+const { text, as: Tag = "span", class: className }: Props = Astro.props;
 ---
 
-<Tag
-  class:list={["glitch", `glitch--${hoverFont}`, className]}
-  data-glitch
-  data-text={text}>{text}</Tag>
+<Tag class:list={["glitch", className]} data-glitch data-text={text}>{text}</Tag>
 
 <script>
-  const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\{}[]<>=+*#$%";
+  const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789§#%&/\\<>=+*?!".split("");
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const rnd = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
 
-  function scramble(el: HTMLElement, frames: number, stepMs: number) {
+  function reveal(el: HTMLElement) {
     const target = el.dataset.text ?? el.textContent ?? "";
     if (reduce) {
       el.textContent = target;
       return;
     }
-    if (el.dataset.busy) return;
-    el.dataset.busy = "1";
+    el.classList.add("px", "glitching");
+    const total = 34; // frames — long, churny boot-up
     let frame = 0;
     const tick = () => {
-      const progress = frame / frames;
+      // resolve point sweeps across the string over the back half
+      const progress = Math.max(0, (frame / total - 0.35) / 0.65);
       el.textContent = target
         .split("")
         .map((ch, i) => {
           if (ch === " ") return " ";
-          return i / target.length < progress
-            ? ch
-            : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+          return i / target.length < progress ? ch : rnd();
         })
         .join("");
-      if (frame++ < frames) {
-        setTimeout(() => requestAnimationFrame(tick), stepMs);
+      if (frame++ < total) {
+        setTimeout(() => requestAnimationFrame(tick), 26);
       } else {
         el.textContent = target;
-        delete el.dataset.busy;
+        el.classList.remove("px", "glitching");
       }
     };
     tick();
@@ -65,7 +59,7 @@ const {
     (entries) => {
       for (const e of entries) {
         if (e.isIntersecting) {
-          scramble(e.target as HTMLElement, 16, 28);
+          reveal(e.target as HTMLElement);
           io.unobserve(e.target);
         }
       }
@@ -73,31 +67,13 @@ const {
     { threshold: 0.6 },
   );
 
-  document.querySelectorAll<HTMLElement>("[data-glitch]").forEach((el) => {
-    io.observe(el);
-    const hover = () => scramble(el, 10, 22);
-    el.addEventListener("mouseenter", hover);
-    el.addEventListener("focusin", hover);
-  });
+  document
+    .querySelectorAll<HTMLElement>("[data-glitch]")
+    .forEach((el) => io.observe(el));
 </script>
 
 <style>
   .glitch {
     font-variant-ligatures: none;
-    transition: color 0.15s ease;
-  }
-  .glitch--mono:hover,
-  .glitch--mono:focus-visible {
-    font-family: var(--font-mono);
-    letter-spacing: -0.03em;
-  }
-  .glitch--serif:hover,
-  .glitch--serif:focus-visible {
-    font-family: ui-serif, Georgia, "Times New Roman", serif;
-    font-style: italic;
-  }
-  .glitch--sans:hover,
-  .glitch--sans:focus-visible {
-    font-family: var(--font-sans);
   }
 </style>

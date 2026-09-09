@@ -13,7 +13,7 @@ const { eyebrow, title, href, linkLabel } = Astro.props;
 <div class="section-heading">
   <div>
     {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-    <GlitchText text={title} as="h2" hoverFont="mono" />
+    <GlitchText text={title} as="h2" />
   </div>
   {href && <a class="section-heading__link" href={href}>{linkLabel ?? "View all"} →</a>}
 </div>
