@@ -1,0 +1,71 @@
+---
+import type { SkillGroup } from "@/data/skills";
+
+interface Props {
+  group: SkillGroup;
+}
+const { group } = Astro.props;
+---
+
+<article class="skillgroup">
+  <h3>{group.name}</h3>
+  <p class="skillgroup__blurb">{group.blurb}</p>
+
+  <ul class="skillgroup__skills">
+    {group.skills.map((s) => <li>{s}</li>)}
+  </ul>
+
+  {
+    group.evidence.length > 0 && (
+      <p class="skillgroup__evidence">
+        <span>Proof:</span>
+        {group.evidence.map((e, i) => (
+          <>
+            {i > 0 && <span aria-hidden="true"> · </span>}
+            <a href={e.href}>{e.label}</a>
+          </>
+        ))}
+      </p>
+    )
+  }
+</article>
+
+<style>
+  .skillgroup {
+    border: var(--border);
+    border-radius: var(--radius);
+    padding: var(--space-6);
+    background: var(--surface);
+  }
+  .skillgroup h3 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-lg);
+  }
+  .skillgroup__blurb {
+    margin: 0 0 var(--space-4);
+    color: var(--muted);
+    font-size: var(--text-sm);
+  }
+  .skillgroup__skills {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .skillgroup__skills li {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    border: var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.2rem 0.5rem;
+    background: var(--paper);
+  }
+  .skillgroup__evidence {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+</style>

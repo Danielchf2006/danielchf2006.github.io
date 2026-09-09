@@ -1,0 +1,111 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"experience">;
+}
+const { entry } = Astro.props;
+const { data, id } = entry;
+---
+
+<article class="xp" id={id}>
+  <div class="xp__meta">
+    <p class="xp__dates">{data.dates}</p>
+    <p class="xp__loc">{data.location}</p>
+  </div>
+
+  <div class="xp__main">
+    <h3 class="xp__org">{data.org}</h3>
+    <p class="xp__role">{data.role}</p>
+
+    {
+      data.highlights.length > 0 && (
+        <ul class="xp__points">
+          {data.highlights.map((h) => (
+            <li>{h}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    <div class="xp__body"><slot /></div>
+
+    {
+      data.tags.length > 0 && (
+        <ul class="xp__tags">
+          {data.tags.map((t) => (
+            <li>{t}</li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .xp {
+    display: grid;
+    grid-template-columns: 12rem 1fr;
+    gap: var(--space-8);
+    padding: var(--space-8) 0;
+    border-top: var(--border);
+    scroll-margin-top: 5rem;
+  }
+  .xp__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+  .xp__dates {
+    margin: 0;
+    color: var(--ink);
+  }
+  .xp__loc {
+    margin: var(--space-1) 0 0;
+    color: var(--muted);
+  }
+  .xp__org {
+    margin: 0;
+    font-size: var(--text-lg);
+  }
+  .xp__role {
+    margin: var(--space-1) 0 var(--space-4);
+    color: var(--muted);
+  }
+  .xp__points {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  .xp__points li {
+    font-size: var(--text-sm);
+  }
+  .xp__body {
+    margin-top: var(--space-4);
+    font-size: var(--text-sm);
+  }
+  .xp__tags {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-4) 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .xp__tags li {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--muted);
+    border: var(--border);
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+  }
+
+  @media (max-width: 40rem) {
+    .xp {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+  }
+</style>

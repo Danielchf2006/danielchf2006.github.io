@@ -1,0 +1,38 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import SkillGroup from "@/components/SkillGroup.astro";
+import { skillGroups } from "@/data/skills";
+---
+
+<BaseLayout title="Skills" description="What Daniel Cai works with — and the projects that prove it.">
+  <section class="head container">
+    <p class="eyebrow">Toolbox</p>
+    <h1>Skills</h1>
+    <p class="head__lead">
+      Grouped by what they're for, each with a link to the work that shows it in
+      use.
+    </p>
+  </section>
+
+  <section class="container">
+    <div class="grid">
+      {skillGroups.map((group) => <SkillGroup group={group} />)}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .head {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-8);
+    max-width: var(--content-width);
+  }
+  .head__lead {
+    color: var(--muted);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: var(--space-6);
+  }
+</style>

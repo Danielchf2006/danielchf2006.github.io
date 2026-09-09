@@ -1,0 +1,191 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+}
+const { project } = Astro.props;
+const { data, id } = project;
+const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
+---
+
+<BaseLayout title={data.title} description={data.summary}>
+  <!-- dark hero: the "dark accent" half of the hybrid look -->
+  <section class="hero dark-block">
+    <div class="container container--prose">
+      <a class="hero__back" href="/projects">← Projects</a>
+      <p class="eyebrow">
+        {[data.role, data.org, data.dates].filter(Boolean).join(" · ")}
+      </p>
+      <h1>{data.title}</h1>
+      <p class="hero__summary">{data.summary}</p>
+
+      {
+        data.metrics.length > 0 && (
+          <dl class="hero__metrics">
+            {data.metrics.map((m) => (
+              <div>
+                <dd>{m.value}</dd>
+                <dt>{m.label}</dt>
+              </div>
+            ))}
+          </dl>
+        )
+      }
+
+      {
+        data.links.length > 0 && (
+          <p class="hero__links">
+            {data.links.map((l) => (
+              <a href={l.href} target="_blank" rel="noopener">
+                {l.label} ↗
+              </a>
+            ))}
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    coverSrc && (
+      <div class="container container--prose cover-wrap">
+        <img src={coverSrc} alt={data.coverAlt} width="920" height="520" />
+      </div>
+    )
+  }
+
+  <article class="container container--prose prose">
+    <slot />
+  </article>
+
+  {
+    data.demoEmbed && (
+      <section class="container demo">
+        <h2>Live demo</h2>
+        <div class="demo__frame">
+          <iframe src={data.demoEmbed} title={`${data.title} demo`} loading="lazy" />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    data.stack.length > 0 && (
+      <section class="container container--prose stack">
+        <h2>Stack</h2>
+        <ul>
+          {data.stack.map((s) => (
+            <li>{s}</li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: var(--space-16) 0 var(--space-12);
+    border-bottom: var(--border);
+  }
+  .hero__back {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    display: inline-block;
+    margin-bottom: var(--space-8);
+  }
+  .hero h1 {
+    margin: var(--space-2) 0;
+  }
+  .hero__summary {
+    font-size: var(--text-lg);
+    color: var(--muted);
+    margin: 0;
+  }
+  .hero__metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8);
+    margin: var(--space-8) 0 0;
+  }
+  .hero__metrics div {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero__metrics dd {
+    margin: 0;
+    font-size: var(--text-2xl);
+    font-weight: 700;
+  }
+  .hero__metrics dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .hero__links {
+    display: flex;
+    gap: var(--space-4);
+    margin: var(--space-8) 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+
+  .cover-wrap {
+    margin-top: var(--space-12);
+  }
+  .cover-wrap img {
+    width: 100%;
+    border: var(--border);
+    border-radius: var(--radius);
+  }
+
+  .prose {
+    margin-top: var(--space-12);
+    font-size: var(--text-base);
+  }
+  .prose :global(h2) {
+    margin-top: var(--space-12);
+  }
+  .prose :global(img) {
+    border: var(--border);
+    border-radius: var(--radius);
+    margin: var(--space-6) 0;
+  }
+
+  .demo {
+    margin-top: var(--space-16);
+  }
+  .demo__frame {
+    aspect-ratio: 16 / 9;
+    border: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .demo__frame iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  .stack {
+    margin-top: var(--space-16);
+  }
+  .stack ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .stack li {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    border: var(--border);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+  }
+</style>

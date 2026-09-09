@@ -1,0 +1,70 @@
+---
+/**
+ * A small nod to the reference site: text briefly scrambles, then settles,
+ * the first time it scrolls into view. Purely decorative — the real text is
+ * always in the DOM, and reduced-motion users just get the plain text.
+ *
+ * Usage: <GlitchText text="Daniel Cai" as="h1" />
+ */
+interface Props {
+  text: string;
+  as?: keyof HTMLElementTagNameMap;
+  class?: string;
+}
+const { text, as: Tag = "span", class: className } = Astro.props as Props;
+---
+
+<Tag class:list={["glitch", className]} data-glitch data-text={text}>{text}</Tag>
+
+<script>
+  const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\<>#*";
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function run(el: HTMLElement) {
+    const target = el.dataset.text ?? el.textContent ?? "";
+    if (reduce) {
+      el.textContent = target;
+      return;
+    }
+    let frame = 0;
+    const total = 16;
+    const tick = () => {
+      const progress = frame / total;
+      el.textContent = target
+        .split("")
+        .map((ch, i) => {
+          if (ch === " ") return " ";
+          return i / target.length < progress
+            ? ch
+            : GLYPHS[(Math.random() * GLYPHS.length) | 0];
+        })
+        .join("");
+      if (frame++ < total) {
+        setTimeout(() => requestAnimationFrame(tick), 28);
+      } else {
+        el.textContent = target;
+      }
+    };
+    tick();
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          run(entry.target as HTMLElement);
+          io.unobserve(entry.target);
+        }
+      }
+    },
+    { threshold: 0.6 },
+  );
+
+  document.querySelectorAll<HTMLElement>("[data-glitch]").forEach((el) => io.observe(el));
+</script>
+
+<style>
+  .glitch {
+    font-variant-ligatures: none;
+  }
+</style>

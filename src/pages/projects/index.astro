@@ -1,0 +1,42 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ProjectCard from "@/components/ProjectCard.astro";
+
+const projects = (await getCollection("projects", (p) => !p.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<BaseLayout title="Projects" description="Data science and modeling projects by Daniel Cai.">
+  <section class="head container">
+    <p class="eyebrow">Work</p>
+    <h1>Projects</h1>
+    <p class="head__lead">
+      Each project links to a write-up: the problem, how I approached it, the
+      results, and the code.
+    </p>
+  </section>
+
+  <section class="container">
+    <div class="grid">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .head {
+    padding-top: var(--space-16);
+    padding-bottom: var(--space-8);
+    max-width: var(--content-width);
+  }
+  .head__lead {
+    color: var(--muted);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    gap: var(--space-6);
+  }
+</style>

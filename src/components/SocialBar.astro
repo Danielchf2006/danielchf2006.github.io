@@ -1,0 +1,57 @@
+---
+import { socials } from "@/data/site";
+
+interface Props {
+  align?: "start" | "center";
+}
+const { align = "start" } = Astro.props;
+---
+
+<ul class="social" data-align={align}>
+  {
+    socials.map((s) => (
+      <li>
+        <a href={s.href} target={s.href.startsWith("http") ? "_blank" : undefined} rel="noopener">
+          <span class="social__glyph" aria-hidden="true">{s.glyph}</span>
+          <span>{s.label}</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .social {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+  .social[data-align="center"] {
+    justify-content: center;
+  }
+  .social a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--muted);
+  }
+  .social a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .social__glyph {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.4rem;
+    height: 1.4rem;
+    padding: 0 0.3rem;
+    border: var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+  }
+</style>

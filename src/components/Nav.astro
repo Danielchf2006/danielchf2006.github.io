@@ -1,0 +1,135 @@
+---
+import { nav, site } from "@/data/site";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path === href || path.startsWith(href + "/");
+---
+
+<header class="nav">
+  <div class="container nav__inner">
+    <a class="nav__brand" href="/">{site.name}</a>
+
+    <nav class="nav__links" aria-label="Primary">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class:list={["nav__link", { "nav__link--active": isActive(item.href) }]}
+            aria-current={isActive(item.href) ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      id="theme-toggle"
+      class="nav__toggle"
+      type="button"
+      aria-label="Toggle color theme"
+    >
+      <span data-theme-icon></span>
+    </button>
+  </div>
+</header>
+
+<script is:inline>
+  (function () {
+    const btn = document.getElementById("theme-toggle");
+    const icon = btn?.querySelector("[data-theme-icon]");
+    const root = document.documentElement;
+
+    function current() {
+      return (
+        root.getAttribute("data-theme") ||
+        (window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light")
+      );
+    }
+    function render() {
+      if (icon) icon.textContent = current() === "dark" ? "☀" : "☾";
+    }
+    render();
+
+    btn?.addEventListener("click", function () {
+      const next = current() === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try {
+        localStorage.setItem("theme", next);
+      } catch (e) {}
+      render();
+    });
+  })();
+</script>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: var(--border);
+  }
+  .nav__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    height: 3.5rem;
+  }
+  .nav__brand {
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  .nav__brand:hover {
+    text-decoration: none;
+  }
+  .nav__links {
+    display: flex;
+    gap: var(--space-4);
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+  .nav__link {
+    color: var(--muted);
+    padding: var(--space-1) 0;
+    border-bottom: 2px solid transparent;
+  }
+  .nav__link:hover {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav__link--active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .nav__toggle {
+    background: transparent;
+    border: var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+  }
+  .nav__toggle:hover {
+    background: var(--accent-soft);
+  }
+
+  @media (max-width: 34rem) {
+    .nav__inner {
+      gap: var(--space-3);
+    }
+    .nav__links {
+      gap: var(--space-3);
+      font-size: var(--text-xs);
+    }
+  }
+</style>

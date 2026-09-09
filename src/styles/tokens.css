@@ -1,0 +1,84 @@
+/*
+ * Design tokens — single source of truth for color, type, spacing.
+ * Nothing in the site should hardcode a hex, a font stack, or a raw size.
+ *
+ * Theme model: light is the default. `[data-theme="dark"]` on <html> flips
+ * the whole page. `.dark-block` forces the dark palette on a subtree
+ * regardless of the page theme — used for project demo heroes and feature
+ * strips (the "dark accents" half of the hybrid look).
+ */
+
+:root {
+  /* --- color: light (default) --- */
+  --paper: #fbfbf9; /* page background */
+  --surface: #ffffff; /* cards, raised panels */
+  --ink: #16161a; /* primary text */
+  --muted: #5b5b66; /* secondary text */
+  --line: #e6e5e0; /* borders, dividers */
+  --accent: #2b59ff; /* links, emphasis, interactive */
+  --accent-soft: #eaefff; /* accent-tinted fill */
+
+  /* --- type --- */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo,
+    Consolas, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-3xl: 2.75rem;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.6;
+
+  /* --- spacing / layout --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --content-width: 46rem; /* prose / resume column */
+  --wide-width: 64rem; /* project grids, wide sections */
+
+  --border: 1px solid var(--line);
+  --shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 8px 24px rgba(20, 20, 30, 0.06);
+}
+
+/* --- color: dark --- */
+:root[data-theme="dark"],
+.dark-block {
+  --paper: #0c0c0e;
+  --surface: #151519;
+  --ink: #ededed;
+  --muted: #9a9aa5;
+  --line: #26262c;
+  --accent: #6f9bff;
+  --accent-soft: #1a2340;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* Respect OS preference on first visit (before any manual toggle sets
+   data-theme explicitly). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0c0c0e;
+    --surface: #151519;
+    --ink: #ededed;
+    --muted: #9a9aa5;
+    --line: #26262c;
+    --accent: #6f9bff;
+    --accent-soft: #1a2340;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+}

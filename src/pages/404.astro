@@ -1,0 +1,17 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Not found" description="Page not found.">
+  <section class="container container--prose nf">
+    <p class="eyebrow">404</p>
+    <h1>This page doesn't exist.</h1>
+    <p><a href="/">← Back home</a></p>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    padding: var(--space-24) 0;
+  }
+</style>
