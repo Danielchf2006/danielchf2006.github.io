@@ -1,6 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import HoverImage from "@/components/HoverImage.astro";
+import CountUp from "@/components/CountUp.astro";
+import Compare from "@/components/Compare.astro";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -26,7 +29,9 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
           <dl class="hero__metrics">
             {data.metrics.map((m) => (
               <div>
-                <dd>{m.value}</dd>
+                <dd>
+                  <CountUp value={m.value} />
+                </dd>
                 <dt>{m.label}</dt>
               </div>
             ))}
@@ -51,7 +56,7 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
   {
     coverSrc && (
       <div class="container container--prose cover-wrap">
-        <img src={coverSrc} alt={data.coverAlt} width="920" height="520" />
+        <HoverImage src={coverSrc} alt={data.coverAlt} width={920} height={520} loading="eager" />
       </div>
     )
   }
@@ -59,6 +64,20 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
   <article class="container container--prose prose">
     <slot />
   </article>
+
+  {
+    data.compare && (
+      <section class="container container--prose compare-sec">
+        <h2>{data.compare.caption ?? "Compare"}</h2>
+        <Compare
+          before={data.compare.before}
+          after={data.compare.after}
+          beforeLabel={data.compare.beforeLabel}
+          afterLabel={data.compare.afterLabel}
+        />
+      </section>
+    )
+  }
 
   {
     data.demoEmbed && (
@@ -136,11 +155,14 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
 
   .cover-wrap {
     margin-top: var(--space-12);
-  }
-  .cover-wrap img {
-    width: 100%;
+    aspect-ratio: 920 / 520;
     border: var(--border);
     border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .compare-sec {
+    margin-top: var(--space-16);
   }
 
   .prose {

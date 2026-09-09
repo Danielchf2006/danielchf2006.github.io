@@ -1,5 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import HoverImage from "@/components/HoverImage.astro";
+import CountUp from "@/components/CountUp.astro";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -10,11 +12,11 @@ const href = `/projects/${id}`;
 const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
 ---
 
-<a class="card" href={href}>
+<a class="card" href={href} data-tilt>
   <div class="card__media">
     {
       coverSrc ? (
-        <img src={coverSrc} alt={data.coverAlt} loading="lazy" width="800" height="500" />
+        <HoverImage src={coverSrc} alt={data.coverAlt} width={800} height={500} />
       ) : (
         <div class="card__placeholder">
           <span>/images/projects/{id}/</span>
@@ -33,7 +35,9 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
           {data.metrics.slice(0, 3).map((m) => (
             <div>
               <dt>{m.label}</dt>
-              <dd>{m.value}</dd>
+              <dd>
+                <CountUp value={m.value} />
+              </dd>
             </div>
           ))}
         </dl>
@@ -52,8 +56,38 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
   </div>
 </a>
 
+<script>
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const MAX = 6; // deg
+
+  document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      el.style.setProperty("--mx", `${(px * 100).toFixed(1)}%`);
+      el.style.setProperty("--my", `${(py * 100).toFixed(1)}%`);
+      if (!reduce) {
+        el.style.setProperty("--rx", `${((0.5 - py) * MAX).toFixed(2)}deg`);
+        el.style.setProperty("--ry", `${((px - 0.5) * MAX).toFixed(2)}deg`);
+      }
+    };
+    const reset = () => {
+      el.style.setProperty("--rx", "0deg");
+      el.style.setProperty("--ry", "0deg");
+    };
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerleave", reset);
+  });
+</script>
+
 <style>
   .card {
+    --rx: 0deg;
+    --ry: 0deg;
+    --mx: 50%;
+    --my: 0%;
+    position: relative;
     display: flex;
     flex-direction: column;
     border: var(--border);
@@ -61,22 +95,34 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
     overflow: hidden;
     background: var(--surface);
     color: var(--ink);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+    transition: transform 0.12s ease-out, box-shadow 0.15s ease;
+  }
+  .card::after {
+    /* pointer-following spotlight */
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    background: radial-gradient(
+      18rem 18rem at var(--mx) var(--my),
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 60%
+    );
   }
   .card:hover {
     text-decoration: none;
-    transform: translateY(-2px);
     box-shadow: var(--shadow);
+  }
+  .card:hover::after {
+    opacity: 1;
   }
   .card__media {
     aspect-ratio: 16 / 10;
     background: var(--accent-soft);
     border-bottom: var(--border);
-  }
-  .card__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
   .card__placeholder {
     width: 100%;
@@ -138,5 +184,11 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
     border: var(--border);
     border-radius: 999px;
     padding: 0.15rem 0.55rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card {
+      transform: none;
+    }
   }
 </style>

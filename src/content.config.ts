@@ -38,6 +38,17 @@ const projects = defineCollection({
       .default([]),
     // optional embedded demo (iframe): a Tableau Public / notebook / app URL
     demoEmbed: z.string().url().optional(),
+    // optional before/after slider, rendered after the write-up.
+    // paths are relative to /public (e.g. /images/projects/<slug>/pred.jpg)
+    compare: z
+      .object({
+        before: z.string().optional(),
+        after: z.string().optional(),
+        beforeLabel: z.string().default("Before"),
+        afterLabel: z.string().default("After"),
+        caption: z.string().optional(),
+      })
+      .optional(),
     draft: z.boolean().default(false),
   }),
 });

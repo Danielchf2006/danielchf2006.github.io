@@ -1,35 +1,47 @@
 ---
 /**
- * A small nod to the reference site: text briefly scrambles, then settles,
- * the first time it scrolls into view. Purely decorative — the real text is
- * always in the DOM, and reduced-motion users just get the plain text.
+ * Text that scrambles through glyphs and resettles:
+ *  - once, when it first scrolls into view (the reveal)
+ *  - again on hover / focus, rendered mid-flight in an alternate typeface
  *
- * Usage: <GlitchText text="Daniel Cai" as="h1" />
+ * The real text is always the element's content (SEO, no-JS). Reduced-motion
+ * viewers get the plain text and just the font swap on hover.
  */
 interface Props {
   text: string;
   as?: keyof HTMLElementTagNameMap;
+  /** typeface to flip to while hovered */
+  hoverFont?: "mono" | "serif" | "sans" | "none";
   class?: string;
 }
-const { text, as: Tag = "span", class: className }: Props = Astro.props;
+const {
+  text,
+  as: Tag = "span",
+  hoverFont = "mono",
+  class: className,
+}: Props = Astro.props;
 ---
 
-<Tag class:list={["glitch", className]} data-glitch data-text={text}>{text}</Tag>
+<Tag
+  class:list={["glitch", `glitch--${hoverFont}`, className]}
+  data-glitch
+  data-text={text}>{text}</Tag>
 
 <script>
-  const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\<>#*";
+  const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/\\{}[]<>=+*#$%";
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  function run(el: HTMLElement) {
+  function scramble(el: HTMLElement, frames: number, stepMs: number) {
     const target = el.dataset.text ?? el.textContent ?? "";
     if (reduce) {
       el.textContent = target;
       return;
     }
+    if (el.dataset.busy) return;
+    el.dataset.busy = "1";
     let frame = 0;
-    const total = 16;
     const tick = () => {
-      const progress = frame / total;
+      const progress = frame / frames;
       el.textContent = target
         .split("")
         .map((ch, i) => {
@@ -39,10 +51,11 @@ const { text, as: Tag = "span", class: className }: Props = Astro.props;
             : GLYPHS[(Math.random() * GLYPHS.length) | 0];
         })
         .join("");
-      if (frame++ < total) {
-        setTimeout(() => requestAnimationFrame(tick), 28);
+      if (frame++ < frames) {
+        setTimeout(() => requestAnimationFrame(tick), stepMs);
       } else {
         el.textContent = target;
+        delete el.dataset.busy;
       }
     };
     tick();
@@ -50,21 +63,41 @@ const { text, as: Tag = "span", class: className }: Props = Astro.props;
 
   const io = new IntersectionObserver(
     (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          run(entry.target as HTMLElement);
-          io.unobserve(entry.target);
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          scramble(e.target as HTMLElement, 16, 28);
+          io.unobserve(e.target);
         }
       }
     },
     { threshold: 0.6 },
   );
 
-  document.querySelectorAll<HTMLElement>("[data-glitch]").forEach((el) => io.observe(el));
+  document.querySelectorAll<HTMLElement>("[data-glitch]").forEach((el) => {
+    io.observe(el);
+    const hover = () => scramble(el, 10, 22);
+    el.addEventListener("mouseenter", hover);
+    el.addEventListener("focusin", hover);
+  });
 </script>
 
 <style>
   .glitch {
     font-variant-ligatures: none;
+    transition: color 0.15s ease;
+  }
+  .glitch--mono:hover,
+  .glitch--mono:focus-visible {
+    font-family: var(--font-mono);
+    letter-spacing: -0.03em;
+  }
+  .glitch--serif:hover,
+  .glitch--serif:focus-visible {
+    font-family: ui-serif, Georgia, "Times New Roman", serif;
+    font-style: italic;
+  }
+  .glitch--sans:hover,
+  .glitch--sans:focus-visible {
+    font-family: var(--font-sans);
   }
 </style>

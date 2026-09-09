@@ -1,0 +1,82 @@
+---
+/**
+ * Renders a metric value that counts up from zero the first time it scrolls
+ * into view. Parses a leading number out of the string and preserves whatever
+ * wraps it ("11.75%", "397K+", "$500k", "3rd" -> left alone if no number).
+ */
+interface Props {
+  value: string;
+  class?: string;
+}
+const { value, class: className }: Props = Astro.props;
+---
+
+<span class:list={["countup", className]} data-countup data-value={value}>{value}</span>
+
+<script>
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function parse(raw: string) {
+    const m = raw.match(/-?\d[\d,]*\.?\d*/);
+    if (!m) return null;
+    // leave ordinals ("3rd", "1st") alone — counting through them looks wrong
+    if (/^(st|nd|rd|th)\b/i.test(raw.slice((m.index ?? 0) + m[0].length))) return null;
+    const numStr = m[0].replace(/,/g, "");
+    const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
+    return {
+      target: parseFloat(numStr),
+      decimals,
+      prefix: raw.slice(0, m.index),
+      suffix: raw.slice((m.index ?? 0) + m[0].length),
+      grouped: m[0].includes(","),
+    };
+  }
+
+  function animate(el: HTMLElement) {
+    const raw = el.dataset.value ?? el.textContent ?? "";
+    const p = parse(raw);
+    if (!p || reduce) {
+      el.textContent = raw;
+      return;
+    }
+    const dur = 900;
+    const start = performance.now();
+    const fmt = (n: number) => {
+      const s = n.toLocaleString("en-US", {
+        minimumFractionDigits: p.decimals,
+        maximumFractionDigits: p.decimals,
+      });
+      return `${p.prefix}${p.grouped ? s : s.replace(/,/g, "")}${p.suffix}`;
+    };
+    const frame = (now: number) => {
+      const t = Math.min(1, (now - start) / dur);
+      const eased = 1 - Math.pow(1 - t, 3);
+      el.textContent = fmt(p.target * eased);
+      if (t < 1) requestAnimationFrame(frame);
+      else el.textContent = raw;
+    };
+    requestAnimationFrame(frame);
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          animate(e.target as HTMLElement);
+          io.unobserve(e.target);
+        }
+      }
+    },
+    { threshold: 0.8 },
+  );
+
+  document
+    .querySelectorAll<HTMLElement>("[data-countup]")
+    .forEach((el) => io.observe(el));
+</script>
+
+<style>
+  .countup {
+    font-variant-numeric: tabular-nums;
+  }
+</style>

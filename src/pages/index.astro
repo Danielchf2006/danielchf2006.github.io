@@ -5,6 +5,7 @@ import SocialBar from "@/components/SocialBar.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import GlitchText from "@/components/GlitchText.astro";
+import HeroChart from "@/components/HeroChart.astro";
 import { site } from "@/data/site";
 
 const projects = (await getCollection("projects", (p) => !p.data.draft && p.data.featured)).sort(
@@ -16,11 +17,16 @@ const current = experience.filter((e) => e.data.end === "Present");
 ---
 
 <BaseLayout>
-  <section class="intro container container--prose">
-    <p class="eyebrow">{site.role}</p>
-    <GlitchText text={site.name} as="h1" class="intro__name" />
-    <p class="intro__tagline">{site.tagline}</p>
-    <SocialBar />
+  <section class="intro container">
+    <div class="intro__text container--prose">
+      <p class="eyebrow">{site.role}</p>
+      <GlitchText text={site.name} as="h1" hoverFont="serif" class="intro__name" />
+      <p class="intro__tagline">{site.tagline}</p>
+      <SocialBar />
+    </div>
+    <div class="intro__chart">
+      <HeroChart />
+    </div>
   </section>
 
   <section class="container container--prose block">
@@ -54,6 +60,10 @@ const current = experience.filter((e) => e.data.end === "Present");
 <style>
   .intro {
     padding-top: var(--space-24);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-12);
+    align-items: center;
   }
   .intro__name {
     font-size: var(--text-3xl);
@@ -63,6 +73,20 @@ const current = experience.filter((e) => e.data.end === "Present");
     font-size: var(--text-lg);
     color: var(--muted);
     margin-bottom: var(--space-8);
+  }
+  .intro__chart {
+    max-width: 34rem;
+    width: 100%;
+    justify-self: center;
+  }
+  @media (min-width: 60rem) {
+    .intro {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: var(--space-16);
+    }
+    .intro__chart {
+      justify-self: end;
+    }
   }
   .block {
     margin-top: var(--space-16);

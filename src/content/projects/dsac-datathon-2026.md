@@ -11,7 +11,8 @@ stack: [Python, SQL, Tableau, XGBoost]
 metrics:
   - { label: "Placement", value: "3rd" }
   - { label: "Team size", value: "4" }
-cover: cover.jpg
+# add public/images/projects/dsac-datathon-2026/cover.jpg then uncomment:
+# cover: cover.jpg
 coverAlt: "DSAC Datathon dashboard"
 links:
   - { label: "Code", href: "https://github.com/Danielchf2006" }

@@ -13,11 +13,19 @@ metrics:
   - { label: "R²", value: "0.90" }
   - { label: "MAPE", value: "11.75%" }
   - { label: "Features", value: "82" }
-cover: cover.jpg
+# add public/images/projects/calpriceiq/cover.jpg then uncomment:
+# cover: cover.jpg
 coverAlt: "CalPriceIQ model — predicted vs. actual close price"
 links:
   - { label: "Code", href: "https://github.com/Danielchf2006" }
 # demoEmbed: "https://public.tableau.com/views/your-viz"
+compare:
+  caption: "With vs. without the leakage feature"
+  beforeLabel: "ListPrice included"
+  afterLabel: "ListPrice removed"
+  # drop these two into public/images/projects/calpriceiq/ when ready:
+  # before: /images/projects/calpriceiq/with-leakage.png
+  # after: /images/projects/calpriceiq/without-leakage.png
 draft: false
 ---
 

@@ -1,0 +1,216 @@
+---
+/**
+ * Before/after image slider. Drag the handle (or use the range slider with a
+ * keyboard) to wipe between two images. If an image path is missing it shows
+ * a labelled placeholder so the layout still works pre-assets.
+ */
+interface Props {
+  before?: string;
+  after?: string;
+  beforeAlt?: string;
+  afterAlt?: string;
+  beforeLabel?: string;
+  afterLabel?: string;
+  /** intrinsic aspect ratio, e.g. "16 / 10" */
+  ratio?: string;
+}
+const {
+  before,
+  after,
+  beforeAlt = "",
+  afterAlt = "",
+  beforeLabel = "Before",
+  afterLabel = "After",
+  ratio = "16 / 10",
+}: Props = Astro.props;
+---
+
+<div class="compare" data-compare style={`--ratio:${ratio}`}>
+  <div class="compare__pane compare__pane--after">
+    {
+      after ? (
+        <img src={after} alt={afterAlt} loading="lazy" draggable="false" />
+      ) : (
+        <div class="compare__ph">/images/projects/…/{afterLabel.toLowerCase().replace(/\s+/g, "-")}.jpg</div>
+      )
+    }
+    <span class="compare__tag compare__tag--right">{afterLabel}</span>
+  </div>
+
+  <div class="compare__pane compare__pane--before" data-clip>
+    {
+      before ? (
+        <img src={before} alt={beforeAlt} loading="lazy" draggable="false" />
+      ) : (
+        <div class="compare__ph compare__ph--alt">/images/projects/…/{beforeLabel.toLowerCase().replace(/\s+/g, "-")}.jpg</div>
+      )
+    }
+    <span class="compare__tag compare__tag--left">{beforeLabel}</span>
+  </div>
+
+  <div class="compare__handle" data-handle>
+    <span></span>
+  </div>
+
+  <input
+    class="compare__range"
+    type="range"
+    min="0"
+    max="100"
+    value="50"
+    aria-label={`Reveal ${beforeLabel} vs ${afterLabel}`}
+  />
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>("[data-compare]").forEach((root) => {
+    const clip = root.querySelector<HTMLElement>("[data-clip]");
+    const handle = root.querySelector<HTMLElement>("[data-handle]");
+    const range = root.querySelector<HTMLInputElement>(".compare__range");
+    if (!clip || !handle || !range) return;
+
+    const set = (pct: number) => {
+      const p = Math.max(0, Math.min(100, pct));
+      clip.style.clipPath = `inset(0 ${100 - p}% 0 0)`;
+      handle.style.left = `${p}%`;
+      range.value = String(p);
+    };
+    set(50);
+
+    range.addEventListener("input", () => set(Number(range.value)));
+
+    let dragging = false;
+    const fromEvent = (clientX: number) => {
+      const rect = root.getBoundingClientRect();
+      set(((clientX - rect.left) / rect.width) * 100);
+    };
+    const down = (e: PointerEvent) => {
+      dragging = true;
+      root.setPointerCapture(e.pointerId);
+      fromEvent(e.clientX);
+    };
+    const move = (e: PointerEvent) => dragging && fromEvent(e.clientX);
+    const up = (e: PointerEvent) => {
+      dragging = false;
+      try {
+        root.releasePointerCapture(e.pointerId);
+      } catch {}
+    };
+    handle.addEventListener("pointerdown", down);
+    root.addEventListener("pointerdown", down);
+    root.addEventListener("pointermove", move);
+    root.addEventListener("pointerup", up);
+    root.addEventListener("pointercancel", up);
+  });
+</script>
+
+<style>
+  .compare {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--ratio);
+    border: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    touch-action: none;
+    user-select: none;
+    background: var(--accent-soft);
+  }
+  .compare__pane {
+    position: absolute;
+    inset: 0;
+  }
+  .compare__pane img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .compare__pane--before {
+    clip-path: inset(0 50% 0 0);
+  }
+  .compare__ph {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--muted);
+    background: var(--surface);
+  }
+  .compare__ph--alt {
+    background: var(--accent-soft);
+  }
+  .compare__tag {
+    position: absolute;
+    bottom: var(--space-3);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    background: color-mix(in srgb, var(--paper) 78%, transparent);
+    color: var(--ink);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-sm);
+    border: var(--border);
+  }
+  .compare__tag--left {
+    left: var(--space-3);
+  }
+  .compare__tag--right {
+    right: var(--space-3);
+  }
+  .compare__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: var(--accent);
+    transform: translateX(-1px);
+    pointer-events: none;
+  }
+  .compare__handle span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2rem;
+    height: 2rem;
+    transform: translate(-50%, -50%);
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: var(--shadow);
+  }
+  .compare__handle span::before,
+  .compare__handle span::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+  }
+  .compare__handle span::before {
+    left: 4px;
+    border-right-color: #fff;
+    transform: translateY(-50%);
+  }
+  .compare__handle span::after {
+    right: 4px;
+    border-left-color: #fff;
+    transform: translateY(-50%);
+  }
+  .compare__range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+  }
+  .compare__range:focus-visible + * ,
+  .compare:focus-within .compare__handle span {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+</style>
