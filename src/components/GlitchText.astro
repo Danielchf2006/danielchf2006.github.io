@@ -11,7 +11,7 @@ interface Props {
   as?: keyof HTMLElementTagNameMap;
   class?: string;
 }
-const { text, as: Tag = "span", class: className } = Astro.props as Props;
+const { text, as: Tag = "span", class: className }: Props = Astro.props;
 ---
 
 <Tag class:list={["glitch", className]} data-glitch data-text={text}>{text}</Tag>

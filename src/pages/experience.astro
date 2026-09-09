@@ -3,7 +3,6 @@ import { getCollection, render } from "astro:content";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ExperienceItem from "@/components/ExperienceItem.astro";
 import { site } from "@/data/site";
-import { education } from "@/data/education";
 
 const entries = (await getCollection("experience")).sort(
   (a, b) => a.data.order - b.data.order,
@@ -14,12 +13,13 @@ const rendered = await Promise.all(
 );
 ---
 
-<BaseLayout title="Experience" description={`${site.name} — experience, education, and resume.`}>
+<BaseLayout title="Experience" description={`${site.name} — experience and resume.`}>
   <section class="head container container--prose">
     <p class="eyebrow">Resume</p>
     <h1>Experience</h1>
     <p class="head__lead">
-      The web version of my resume. For the one-page PDF, use the button below.
+      The web version of my resume. For the one-page PDF — education included —
+      use the button below.
     </p>
     <p class="head__actions">
       <a class="btn" href={site.resumePath} target="_blank" rel="noopener">
@@ -29,29 +29,6 @@ const rendered = await Promise.all(
   </section>
 
   <section class="container container--prose section">
-    <h2>Education</h2>
-    {
-      education.map((ed) => (
-        <div class="edu">
-          <div class="edu__row">
-            <p class="edu__school">{ed.school}</p>
-            <p class="edu__loc">{ed.location}</p>
-          </div>
-          <p class="edu__degree">
-            {ed.degree} · {ed.dates}
-          </p>
-          <ul>
-            {ed.details.map((d) => (
-              <li>{d}</li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
-  </section>
-
-  <section class="container container--prose section">
-    <h2>Work</h2>
     {rendered.map(({ entry, Content }) => (
       <ExperienceItem entry={entry}>
         <Content />
@@ -84,32 +61,6 @@ const rendered = await Promise.all(
     filter: brightness(1.08);
   }
   .section {
-    padding-top: var(--space-12);
-  }
-  .edu__row {
-    display: flex;
-    justify-content: space-between;
-    gap: var(--space-4);
-  }
-  .edu__school {
-    margin: 0;
-    font-weight: 650;
-  }
-  .edu__loc {
-    margin: 0;
-    color: var(--muted);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-  }
-  .edu__degree {
-    margin: var(--space-1) 0 var(--space-2);
-    color: var(--muted);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-  }
-  .edu ul {
-    margin: 0;
-    padding-left: 1.1rem;
-    font-size: var(--text-sm);
+    padding-top: var(--space-8);
   }
 </style>

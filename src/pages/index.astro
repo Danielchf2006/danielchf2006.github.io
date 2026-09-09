@@ -6,7 +6,6 @@ import SectionHeading from "@/components/SectionHeading.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import GlitchText from "@/components/GlitchText.astro";
 import { site } from "@/data/site";
-import { education } from "@/data/education";
 
 const projects = (await getCollection("projects", (p) => !p.data.draft && p.data.featured)).sort(
   (a, b) => a.data.order - b.data.order,
@@ -37,25 +36,6 @@ const current = experience.filter((e) => e.data.end === "Present");
       }
     </ul>
     <p class="block__more"><a href="/experience">Full experience & resume →</a></p>
-  </section>
-
-  <section class="container container--prose block">
-    <h2>Education</h2>
-    {
-      education.map((ed) => (
-        <div class="edu">
-          <p class="edu__school">{ed.school}</p>
-          <p class="edu__degree">
-            {ed.degree} · {ed.dates}
-          </p>
-          <ul>
-            {ed.details.map((d) => (
-              <li>{d}</li>
-            ))}
-          </ul>
-        </div>
-      ))
-    }
   </section>
 
   <section class="container block">
@@ -103,21 +83,6 @@ const current = experience.filter((e) => e.data.end === "Present");
   .block__more {
     margin-top: var(--space-4);
     font-family: var(--font-mono);
-    font-size: var(--text-sm);
-  }
-  .edu__school {
-    margin: 0;
-    font-weight: 650;
-  }
-  .edu__degree {
-    margin: var(--space-1) 0 var(--space-2);
-    color: var(--muted);
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-  }
-  .edu ul {
-    margin: 0;
-    padding-left: 1.1rem;
     font-size: var(--text-sm);
   }
   .grid {
