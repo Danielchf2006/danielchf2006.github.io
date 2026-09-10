@@ -5,7 +5,6 @@ import SocialBar from "@/components/SocialBar.astro";
 import SectionHeading from "@/components/SectionHeading.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import GlitchText from "@/components/GlitchText.astro";
-import HeroChart from "@/components/HeroChart.astro";
 import HoverImage from "@/components/HoverImage.astro";
 import { site } from "@/data/site";
 
@@ -36,9 +35,21 @@ const current = experience.filter((e) => e.data.end === "Present");
     </div>
   </section>
 
-  <section class="container chartband">
-    <p class="eyebrow">// model output</p>
-    <HeroChart />
+  <section class="container obsessed">
+    <p class="eyebrow">// crazy about &mdash; last 7 days</p>
+    <div class="obsessed__stage">
+      <img
+        src="/images/obsession/fighters.png"
+        alt={`Pixel fighters — ${site.obsession.label}`}
+        width="792"
+        height="396"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <p class="obsessed__note">
+      <b>{site.obsession.label}</b> <span>{site.obsession.note}</span>
+    </p>
   </section>
 
   <section class="container container--prose block">
@@ -108,12 +119,37 @@ const current = experience.filter((e) => e.data.end === "Present");
     font-size: var(--text-xs);
     color: var(--accent-2);
   }
-  .chartband {
+  .obsessed {
     margin-top: var(--space-12);
-    max-width: 44rem;
+    max-width: 40rem;
   }
-  .chartband .eyebrow {
+  .obsessed .eyebrow {
     margin-bottom: var(--space-4);
+  }
+  .obsessed__stage {
+    border: var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    background-image: var(--dither);
+    background-size: var(--dither-size);
+    padding: var(--space-2) var(--space-4);
+    display: flex;
+  }
+  .obsessed__stage img {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+  }
+  .obsessed__note {
+    margin: var(--space-3) 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--muted);
+  }
+  .obsessed__note b {
+    color: var(--accent-2);
+    font-weight: 700;
+    letter-spacing: 0.06em;
   }
   .block {
     margin-top: var(--space-16);
