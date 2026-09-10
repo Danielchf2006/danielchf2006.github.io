@@ -27,7 +27,7 @@ const current = experience.filter((e) => e.data.end === "Present");
     <div class="intro__portrait">
       {
         site.portrait ? (
-          <HoverImage src={site.portrait} alt={site.fullName} width={480} height={600} loading="eager" />
+          <HoverImage src={site.portrait} alt={site.fullName} width={736} height={736} loading="eager" />
         ) : (
           <span>/images/profile/</span>
         )
@@ -56,17 +56,14 @@ const current = experience.filter((e) => e.data.end === "Present");
       <div class="obsessed__stage">
         <img
           src="/images/obsession/fighters.png"
-          alt={`Pixel fighters — ${site.obsession.label}`}
-          width="792"
-          height="396"
+          alt={`${site.obsession.label} — pixel art`}
+          width="540"
+          height="437"
           loading="lazy"
           decoding="async"
         />
       </div>
-      <p class="obsessed__note">
-        <b>{site.obsession.label}</b><br />
-        <span>{site.obsession.note}</span>
-      </p>
+      <p class="obsessed__note">{site.obsession.note}</p>
     </div>
   </section>
 
@@ -107,7 +104,7 @@ const current = experience.filter((e) => e.data.end === "Present");
   .intro__portrait {
     flex: 0 0 auto;
     width: 12rem;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 1;
     border: var(--border);
     border-radius: var(--radius);
     overflow: hidden;
@@ -170,7 +167,7 @@ const current = experience.filter((e) => e.data.end === "Present");
     background-color: var(--surface);
     background-image: var(--dither);
     background-size: var(--dither-size);
-    padding: var(--space-2) var(--space-3);
+    padding: var(--space-4);
     display: flex;
     max-width: 20rem;
   }
@@ -184,13 +181,8 @@ const current = experience.filter((e) => e.data.end === "Present");
     font-family: var(--font-pixel);
     font-size: var(--text-base);
     line-height: 1.5;
-    color: var(--muted);
-    -webkit-font-smoothing: none;
-  }
-  .obsessed__note b {
     color: var(--accent);
-    font-weight: 700;
-    letter-spacing: 0.04em;
+    -webkit-font-smoothing: none;
   }
   .grid {
     display: grid;
