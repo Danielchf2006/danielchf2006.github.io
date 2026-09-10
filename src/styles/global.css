@@ -123,6 +123,31 @@ body {
   flex-direction: column;
   /* NeueBit Regular is a hairline; its Bold cut is the readable body weight */
   font-weight: 600;
+  /* faint pixel-grid texture + a low glow so the page never reads dead-flat */
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(
+      120% 80% at 50% -10%,
+      color-mix(in srgb, var(--accent) 8%, transparent),
+      transparent 60%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--ink) 3%, transparent) 0 1px,
+      transparent 1px 6px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ink) 3%, transparent) 0 1px,
+      transparent 1px 6px
+    );
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--paper);
+  text-shadow: none;
 }
 
 main {

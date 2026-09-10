@@ -1,0 +1,122 @@
+---
+/**
+ * "DC" pixel monogram + a blinking caret block. Two-tone: letters in
+ * currentColor, caret in --accent. Rendered as crisp inline-SVG rects, no
+ * image file. Used as the header brand mark.
+ */
+interface Props {
+  size?: number | string;
+  class?: string;
+}
+const { size = 20, class: className }: Props = Astro.props;
+
+// 24 wide x 16 tall — rounded-corner pixel "DC"
+const LETTERS = [
+  "                        ",
+  "   #####     #####      ",
+  "  #######   #######     ",
+  "  ##   ##   ##   ##     ",
+  "  ##    ##  ##          ",
+  "  ##    ##  ##          ",
+  "  ##    ##  ##          ",
+  "  ##    ##  ##          ",
+  "  ##    ##  ##          ",
+  "  ##    ##  ##          ",
+  "  ##    ##  ##          ",
+  "  ##   ##   ##   ##     ",
+  "  #######   #######     ",
+  "   #####     #####      ",
+  "                        ",
+  "                        ",
+];
+
+// blinking text caret after the monogram
+const CARET = [
+  "                        ",
+  "                        ",
+  "                     ## ",
+  "                     ## ",
+  "                     ## ",
+  "                     ## ",
+  "                     ## ",
+  "                     ## ",
+  "                     ## ",
+  "                     ## ",
+  "                     ## ",
+  "                     ## ",
+  "                     ## ",
+  "                        ",
+  "                        ",
+  "                        ",
+];
+
+const W = LETTERS[0].length;
+const H = LETTERS.length;
+
+type Rect = { x: number; y: number; w: number };
+function toRuns(bitmap: string[]): Rect[] {
+  const rects: Rect[] = [];
+  bitmap.forEach((row, y) => {
+    let x = 0;
+    while (x < row.length) {
+      if (row[x] === "#") {
+        let w = 1;
+        while (row[x + w] === "#") w++;
+        rects.push({ x, y, w });
+        x += w;
+      } else x++;
+    }
+  });
+  return rects;
+}
+
+const letterRects = toRuns(LETTERS);
+const caretRects = toRuns(CARET);
+const w = typeof size === "number" ? (size * W) / H : size;
+---
+
+<svg
+  class:list={["logo", className]}
+  width={w}
+  height={size}
+  viewBox={`0 0 ${W} ${H}`}
+  shape-rendering="crispEdges"
+  role="img"
+  aria-label="Daniel Cai"
+>
+  <g fill="currentColor">
+    {letterRects.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" />)}
+  </g>
+  <g class="logo__caret">
+    {caretRects.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" />)}
+  </g>
+</svg>
+
+<style>
+  .logo {
+    display: block;
+  }
+  .logo__caret {
+    fill: var(--accent);
+    animation: logo-blink 1.1s steps(1, end) infinite;
+  }
+  @keyframes logo-blink {
+    0%,
+    55% {
+      opacity: 1;
+    }
+    56%,
+    100% {
+      opacity: 0;
+    }
+  }
+  a:hover > .logo,
+  a:focus-visible > .logo {
+    filter: drop-shadow(1px 0 0 var(--glitch-a)) drop-shadow(-1px 0 0 var(--glitch-b));
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .logo__caret {
+      animation: none;
+    }
+  }
+</style>
