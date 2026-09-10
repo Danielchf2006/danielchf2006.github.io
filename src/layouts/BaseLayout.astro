@@ -56,9 +56,15 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
           if (t === "light" || t === "dark") root.setAttribute("data-theme", t);
         } catch (e) {}
         try {
+          // ?intro forces a replay; #skip-intro / reduced-motion always skip
+          var qs = location.search + location.hash;
+          var force = /(?:\?|&)intro\b/.test(location.search);
+          if (force) sessionStorage.removeItem("intro-seen");
           var skip =
-            window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
-            sessionStorage.getItem("intro-seen") === "1";
+            !force &&
+            (window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+              sessionStorage.getItem("intro-seen") === "1" ||
+              /skip-intro/.test(qs));
           if (skip) root.classList.add("intro-off");
         } catch (e) {}
       })();
