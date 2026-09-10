@@ -1,6 +1,7 @@
 ---
 import { nav } from "@/data/site";
 import Logo from "@/components/Logo.astro";
+import SocialBar from "@/components/SocialBar.astro";
 
 const path = Astro.url.pathname.replace(/\/$/, "") || "/";
 const isActive = (href: string) =>
@@ -27,14 +28,17 @@ const isActive = (href: string) =>
       }
     </nav>
 
-    <button
-      id="theme-toggle"
-      class="nav__toggle"
-      type="button"
-      aria-label="Toggle color theme"
-    >
-      <span data-theme-icon></span>
-    </button>
+    <div class="nav__right">
+      <SocialBar iconOnly size={18} />
+      <button
+        id="theme-toggle"
+        class="nav__toggle"
+        type="button"
+        aria-label="Toggle color theme"
+      >
+        <span data-theme-icon></span>
+      </button>
+    </div>
   </div>
 </header>
 
@@ -102,6 +106,14 @@ const isActive = (href: string) =>
     font-family: var(--font-mono);
     font-size: var(--text-sm);
   }
+  .nav__right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding-left: var(--space-4);
+    margin-left: var(--space-1);
+    border-left: var(--border);
+  }
   .nav__link {
     position: relative;
     color: var(--muted);
@@ -139,6 +151,16 @@ const isActive = (href: string) =>
     background: var(--accent-soft);
   }
 
+  @media (max-width: 52rem) {
+    /* socials live in the hero + footer too — drop them from a tight bar */
+    .nav__right :global(.social) {
+      display: none;
+    }
+    .nav__right {
+      padding-left: 0;
+      border-left: none;
+    }
+  }
   @media (max-width: 34rem) {
     .nav__inner {
       gap: var(--space-3);

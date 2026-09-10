@@ -4,11 +4,16 @@ import PixelIcon from "@/components/PixelIcon.astro";
 
 interface Props {
   align?: "start" | "center";
+  /** icons only, no text labels (for the header) */
+  iconOnly?: boolean;
+  /** icon pixel size */
+  size?: number;
 }
-const { align = "start" } = Astro.props;
+const { align = "start", iconOnly = false, size = iconOnly ? 18 : 14 } =
+  Astro.props;
 ---
 
-<ul class="social" data-align={align}>
+<ul class:list={["social", { "social--icons": iconOnly }]} data-align={align}>
   {
     socials.map((s) => (
       <li>
@@ -16,11 +21,12 @@ const { align = "start" } = Astro.props;
           href={s.href}
           target={s.href.startsWith("http") ? "_blank" : undefined}
           rel="noopener"
+          aria-label={s.label}
         >
           <span class="social__glyph">
-            <PixelIcon name={s.icon} size={14} title={s.label} />
+            <PixelIcon name={s.icon} size={size} title={s.label} />
           </span>
-          <span>{s.label}</span>
+          {!iconOnly && <span>{s.label}</span>}
         </a>
       </li>
     ))
@@ -40,6 +46,9 @@ const { align = "start" } = Astro.props;
   }
   .social[data-align="center"] {
     justify-content: center;
+  }
+  .social--icons {
+    gap: var(--space-2);
   }
   .social a {
     display: inline-flex;
@@ -62,5 +71,9 @@ const { align = "start" } = Astro.props;
     height: 1.6rem;
     border: var(--border);
     color: var(--ink);
+  }
+  .social--icons .social__glyph {
+    width: 2rem;
+    height: 2rem;
   }
 </style>
