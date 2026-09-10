@@ -35,36 +35,39 @@ const current = experience.filter((e) => e.data.end === "Present");
     </div>
   </section>
 
-  <section class="container obsessed">
-    <p class="eyebrow">// crazy about &mdash; last 7 days</p>
-    <div class="obsessed__stage">
-      <img
-        src="/images/obsession/fighters.png"
-        alt={`Pixel fighters — ${site.obsession.label}`}
-        width="792"
-        height="396"
-        loading="lazy"
-        decoding="async"
-      />
+  <section class="container split">
+    <div class="split__now">
+      <p class="eyebrow">// currently</p>
+      <ul class="current">
+        {
+          current.map((e) => (
+            <li>
+              <a href={`/experience#${e.id}`}>{e.data.org}</a>
+              <span> — {e.data.role}</span>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="block__more"><a href="/experience">Full experience & resume &rarr;</a></p>
     </div>
-    <p class="obsessed__note">
-      <b>{site.obsession.label}</b> <span>{site.obsession.note}</span>
-    </p>
-  </section>
 
-  <section class="container container--prose block">
-    <h2>Currently</h2>
-    <ul class="current">
-      {
-        current.map((e) => (
-          <li>
-            <a href={`/experience#${e.id}`}>{e.data.org}</a>
-            <span> — {e.data.role}</span>
-          </li>
-        ))
-      }
-    </ul>
-    <p class="block__more"><a href="/experience">Full experience & resume →</a></p>
+    <div class="split__crazy">
+      <p class="eyebrow eyebrow--play">// crazy about &mdash; last 7 days</p>
+      <div class="obsessed__stage">
+        <img
+          src="/images/obsession/fighters.png"
+          alt={`Pixel fighters — ${site.obsession.label}`}
+          width="792"
+          height="396"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <p class="obsessed__note">
+        <b>{site.obsession.label}</b><br />
+        <span>{site.obsession.note}</span>
+      </p>
+    </div>
   </section>
 
   <section class="container block">
@@ -119,41 +122,24 @@ const current = experience.filter((e) => e.data.end === "Present");
     font-size: var(--text-xs);
     color: var(--accent-2);
   }
-  .obsessed {
-    margin-top: var(--space-12);
-    max-width: 40rem;
+  /* two columns: the professional "currently" and the playful "crazy about" */
+  .split {
+    margin-top: var(--space-16);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-12);
+    align-items: start;
   }
-  .obsessed .eyebrow {
+  @media (max-width: 46rem) {
+    .split {
+      grid-template-columns: 1fr;
+      gap: var(--space-10);
+    }
+  }
+  .split .eyebrow {
     margin-bottom: var(--space-4);
   }
-  .obsessed__stage {
-    border: var(--border);
-    border-radius: var(--radius);
-    background-color: var(--surface);
-    background-image: var(--dither);
-    background-size: var(--dither-size);
-    padding: var(--space-2) var(--space-4);
-    display: flex;
-  }
-  .obsessed__stage img {
-    width: 100%;
-    height: auto;
-    image-rendering: pixelated;
-  }
-  .obsessed__note {
-    margin: var(--space-3) 0 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--muted);
-  }
-  .obsessed__note b {
-    color: var(--accent-2);
-    font-weight: 700;
-    letter-spacing: 0.06em;
-  }
-  .block {
-    margin-top: var(--space-16);
-  }
+
   .current {
     list-style: none;
     padding: 0;
@@ -171,6 +157,40 @@ const current = experience.filter((e) => e.data.end === "Present");
     margin-top: var(--space-4);
     font-family: var(--font-mono);
     font-size: var(--text-sm);
+  }
+
+  /* --- crazy about: different typeface, gamier tone --- */
+  .eyebrow--play {
+    font-family: var(--font-pixel);
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+  .obsessed__stage {
+    border: var(--border);
+    background-color: var(--surface);
+    background-image: var(--dither);
+    background-size: var(--dither-size);
+    padding: var(--space-2) var(--space-3);
+    display: flex;
+    max-width: 20rem;
+  }
+  .obsessed__stage img {
+    width: 100%;
+    height: auto;
+    image-rendering: pixelated;
+  }
+  .obsessed__note {
+    margin: var(--space-3) 0 0;
+    font-family: var(--font-pixel);
+    font-size: var(--text-base);
+    line-height: 1.5;
+    color: var(--muted);
+    -webkit-font-smoothing: none;
+  }
+  .obsessed__note b {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.04em;
   }
   .grid {
     display: grid;

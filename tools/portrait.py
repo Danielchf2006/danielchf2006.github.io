@@ -1,84 +1,70 @@
-"""Pixel avatar — OMORI-ish game-character, with glasses."""
+"""Pixel avatar — clean cyber-noir style with glasses. Matches the site palette."""
 from PIL import Image, ImageDraw
-import random
 W, H, SCALE = 64, 80, 9
-random.seed(4)
-img = Image.new("RGB", (W, H), (93, 79, 123)); d = ImageDraw.Draw(img)
-BG=(93,79,123); BG_HI=(110,94,144)
-SKIN=(245,230,216); SKIN_SH=(229,208,193)
-BLUSH=(235,159,177)
-HAIR=(24,20,31); HAIR_HI=(42,36,52)
-HOODIE=(38,34,47); HOODIE_HI=(55,50,67); HOOD_IN=(21,18,27)
-FRAME=(13,11,18); LENS=(151,216,207)
-EYE=(15,12,20); WHITE=(248,251,251)
+img = Image.new("RGB", (W, H), (58, 50, 78)); d = ImageDraw.Draw(img)
+BG=(58,50,78); BG_HI=(74,64,98)
+SKIN=(231,189,151); SKIN_SH=(203,158,122); SKIN_HI=(244,213,181)
+HAIR=(26,22,34); HAIR_HI=(47,41,61)
+HOODIE=(108,51,224); HOODIE_SH=(70,32,150); HOOD_IN=(30,24,48)
+FRAME=(11,10,16); LENS=(74,216,196); GLINT=(216,255,251)
+EYE=(15,12,19); MOUTH=(160,104,104)
 def box(a,b,c,e,col):
     a,c=sorted((a,c)); b,e=sorted((b,e)); d.rectangle([a,b,c,e],fill=col)
 def ell(a,b,c,e,col): d.ellipse([a,b,c,e],fill=col)
 def poly(p,col): d.polygon(p,fill=col)
 
-ell(-16,-12,W+16,H-2,BG_HI); ell(2,30,W-2,H+34,BG)
+ell(-14,-10,W+14,H-2,BG_HI); ell(2,30,W-2,H+32,BG)
 
 # hoodie
-ell(-6,54,W+6,H+22,HOODIE); box(0,70,W,H,HOODIE)
-poly([(19,56),(45,56),(32,80)],HOOD_IN)
-box(6,60,W-6,64,HOODIE_HI)
-box(23,56,25,72,HOODIE_HI); box(39,56,41,71,HOODIE_HI)
+ell(-4,55,W+4,H+22,HOODIE); box(0,71,W,H,HOODIE)
+poly([(20,57),(44,57),(32,80)],HOOD_IN)
+ell(-4,57,20,H+22,HOODIE_SH)
 
 # neck
-box(28,50,36,60,SKIN_SH); box(29,49,35,56,SKIN)
+box(28,49,36,60,SKIN_SH); box(29,48,35,56,SKIN)
 
-# head  (big, fills the frame)
-ell(12,8,52,58,SKIN)
-ell(13,30,24,55,SKIN_SH)                     # soft left shade
+# head
+ell(14,12,50,56,SKIN)
+ell(15,28,25,54,SKIN_SH)
 
 # ears
-box(12,32,16,41,SKIN_SH); box(48,32,52,41,SKIN_SH)
+box(14,31,17,40,SKIN_SH); box(47,31,50,40,SKIN_SH)
 
-# --- hair: a crown on top, short sides, wispy fringe ---
-ell(9,0,55,26,HAIR)                          # crown (top ~26px only)
-box(11,4,53,16,HAIR)
-box(11,14,16,40,HAIR); box(48,14,53,40,HAIR) # short sides, frame the face
-poly([(9,6),(14,3),(11,18)],HAIR)            # flicks
-poly([(55,6),(50,3),(53,18)],HAIR)
-poly([(29,-2),(35,-2),(34,4),(30,4)],HAIR)   # cowlick
-box(18,3,34,5,HAIR_HI)                        # sheen
+# --- hair: a cap on top, short sides, few fringe wisps ---
+ell(10,0,54,26,HAIR)                         # rounded cap
+box(12,12,16,33,HAIR); box(48,12,52,33,HAIR) # short side strands
+poly([(9,7),(14,3),(11,18)],HAIR)            # stray flicks
+poly([(55,7),(50,3),(53,18)],HAIR)
+box(20,4,34,6,HAIR_HI); box(24,9,30,11,HAIR_HI)   # sheen streaks
+poly([(21,18),(26,18),(24,24)],HAIR)         # 2 soft fringe wisps
+poly([(36,18),(41,18),(39,25)],HAIR)
 
-# fringe wisps — short, top of the forehead only (y11..~21)
-fx = 12
-while fx < 52:
-    w = random.choice([3,4,5]); L = random.choice([5,7,10,6,8])
-    poly([(fx,11),(fx+w,11),(fx+w//2,11+L)],HAIR)
-    fx += w-1
-# three longer strands (between/beside the eyes) reaching toward the glasses
-poly([(22,11),(25,11),(23,28)],HAIR)
-poly([(39,11),(42,11),(41,28)],HAIR)
-poly([(31,10),(34,10),(32,24)],HAIR)
+# brows
+box(23,30,30,32,HAIR); box(35,30,42,32,HAIR)
 
-# blush
-ell(18,41,25,45,BLUSH); ell(39,41,46,45,BLUSH)
+# eyes
+box(24,34,29,38,SKIN); box(25,34,28,37,EYE); box(25,34,26,35,GLINT)
+box(37,34,42,38,SKIN); box(38,34,41,37,EYE); box(38,34,39,35,GLINT)
 
-# eyes (small dots)
-box(23,35,26,39,EYE); box(38,35,41,39,EYE)
-box(23,35,24,36,WHITE); box(38,35,39,36,WHITE)
+# nose + mouth
+box(31,38,33,43,SKIN_SH); box(30,43,34,45,SKIN_SH)
+box(28,48,37,50,MOUTH); box(29,50,36,51,SKIN_SH)
 
-# nose + blank "..." mouth
-box(31,41,32,43,SKIN_SH)
-box(29,48,30,49,EYE); box(32,48,33,49,EYE); box(35,48,36,49,EYE)
-
-# glasses — round frames over the eyes
-def lens(cx,cy):
-    ell(cx-6,cy-5,cx+6,cy+5,LENS)
-    d.ellipse([cx-6,cy-5,cx+6,cy+5],outline=FRAME,width=1)
-    box(cx-4,cy-3,cx-2,cy-1,WHITE)
-LX,RX,GY = 24, 40, 37
+# glasses — rectangular teal frames, over the eyes
+def lens(x0,y0):
+    x1,y1 = x0+13,y0+9
+    box(x0+1,y0+1,x1-1,y1-1,LENS)
+    d.rectangle([x0,y0,x1,y1],outline=FRAME,width=1)
+    box(x0+2,y0+2,x0+4,y0+3,GLINT)
+LX,RX,GY = 20,33,33
 lens(LX,GY); lens(RX,GY)
-box(LX+6,GY-1,RX-6,GY+1,FRAME)
-box(14,GY-1,LX-6,GY,FRAME)
-box(RX+6,GY-1,51,GY,FRAME)
+box(LX+13,GY+3,RX,GY+5,FRAME)
+box(15,GY+3,LX,GY+5,FRAME)
+box(RX+13,GY+3,50,GY+5,FRAME)
 
 # scanlines
 sl=Image.new("RGBA",(W,H),(0,0,0,0)); sd=ImageDraw.Draw(sl)
-for y in range(0,H,3): sd.line([(0,y),(W,y)],fill=(0,0,0,16))
+for y in range(0,H,3): sd.line([(0,y),(W,y)],fill=(0,0,0,18))
 img=Image.alpha_composite(img.convert("RGBA"),sl).convert("RGB")
 img.resize((W*SCALE,H*SCALE),Image.NEAREST).save("public/images/profile/daniel.png")
 print("saved")
