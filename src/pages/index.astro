@@ -53,16 +53,15 @@ const current = experience.filter((e) => e.data.end === "Present");
 
     <div class="split__crazy">
       <p class="eyebrow eyebrow--play">// crazy about &mdash; last 7 days</p>
-      <div class="obsessed__stage">
-        <img
-          src="/images/obsession/fighters.png"
-          alt={`${site.obsession.label} — pixel art`}
-          width="540"
-          height="437"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
+      <img
+        class="obsessed__img"
+        src="/images/obsession/fighters.png"
+        alt={`${site.obsession.label} — pixel art`}
+        width="589"
+        height="485"
+        loading="lazy"
+        decoding="async"
+      />
       <p class="obsessed__note">{site.obsession.note}</p>
     </div>
   </section>
@@ -103,16 +102,22 @@ const current = experience.filter((e) => e.data.end === "Present");
   }
   .intro__portrait {
     flex: 0 0 auto;
-    width: 12rem;
+    width: 13rem;
     aspect-ratio: 1;
     border: var(--border);
-    border-radius: var(--radius);
     overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+  .intro__portrait:has(span) {
     background-color: var(--surface);
     background-image: var(--dither);
     background-size: var(--dither-size);
-    display: grid;
-    place-items: center;
+  }
+  .intro__portrait :global(.hoverimg),
+  .intro__portrait :global(.hoverimg img) {
+    width: 100%;
+    height: 100%;
   }
   .intro__portrait span {
     font-family: var(--font-mono);
@@ -162,18 +167,12 @@ const current = experience.filter((e) => e.data.end === "Present");
     color: var(--accent);
     letter-spacing: 0.06em;
   }
-  .obsessed__stage {
-    border: var(--border);
-    background-color: var(--surface);
-    background-image: var(--dither);
-    background-size: var(--dither-size);
-    padding: var(--space-4);
-    display: flex;
-    max-width: 20rem;
-  }
-  .obsessed__stage img {
+  .obsessed__img {
+    display: block;
     width: 100%;
+    max-width: 20rem;
     height: auto;
+    border: var(--border);
     image-rendering: pixelated;
   }
   .obsessed__note {
