@@ -1,0 +1,113 @@
+---
+/**
+ * Hand-drawn 16x16 pixel icons, rendered as crisp inline SVG rects in
+ * currentColor. No image files. Add an icon by adding a 16-row bitmap below
+ * ('#' = filled pixel).
+ */
+interface Props {
+  name: keyof typeof ICONS;
+  size?: number | string;
+  class?: string;
+  title?: string;
+}
+const { name, size = "1em", class: className, title }: Props = Astro.props;
+
+const ICONS = {
+  mail: [
+    "                ",
+    "                ",
+    "                ",
+    " ############## ",
+    " ##          ## ",
+    " # #        # # ",
+    " #  #      #  # ",
+    " #   #    #   # ",
+    " #    #  #    # ",
+    " #     ##     # ",
+    " #            # ",
+    " #            # ",
+    " ############## ",
+    "                ",
+    "                ",
+    "                ",
+  ],
+  github: [
+    "                ",
+    "   #        #   ",
+    "   ##      ##   ",
+    "   ##########   ",
+    "  ############  ",
+    "  ## ##  ## ##  ",
+    "  ############  ",
+    "  ############  ",
+    "  #### ## ####  ",
+    "   ##########   ",
+    "  ############  ",
+    "  ## ###### ##  ",
+    "   ##      ##   ",
+    "   ##      ##   ",
+    "                ",
+    "                ",
+  ],
+  linkedin: [
+    "                ",
+    "                ",
+    "  ##            ",
+    "  ##            ",
+    "                ",
+    "  ##  #######   ",
+    "  ##  ##   ##   ",
+    "  ##  ##   ##   ",
+    "  ##  ##   ##   ",
+    "  ##  ##   ##   ",
+    "  ##  ##   ##   ",
+    "  ##  ##   ##   ",
+    "  ##  ##   ##   ",
+    "  ##  ##   ##   ",
+    "                ",
+    "                ",
+  ],
+} as const;
+
+type Rect = { x: number; y: number; w: number };
+function toRuns(bitmap: readonly string[]): Rect[] {
+  const rects: Rect[] = [];
+  bitmap.forEach((row, y) => {
+    let x = 0;
+    while (x < row.length) {
+      if (row[x] === "#") {
+        let w = 1;
+        while (row[x + w] === "#") w++;
+        rects.push({ x, y, w });
+        x += w;
+      } else {
+        x++;
+      }
+    }
+  });
+  return rects;
+}
+
+const rects = toRuns(ICONS[name]);
+---
+
+<svg
+  class:list={["pxicon", className]}
+  width={size}
+  height={size}
+  viewBox="0 0 16 16"
+  shape-rendering="crispEdges"
+  fill="currentColor"
+  role={title ? "img" : "presentation"}
+  aria-hidden={title ? undefined : "true"}
+>
+  {title && <title>{title}</title>}
+  {rects.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" />)}
+</svg>
+
+<style>
+  .pxicon {
+    display: block;
+    flex: none;
+  }
+</style>

@@ -37,14 +37,15 @@ export const site = {
 export type SocialLink = {
   label: string;
   href: string;
-  // short text glyph used until real icons are dropped in
-  glyph: string;
+  // pixel icon name — see src/components/PixelIcon.astro
+  icon: "mail" | "github" | "linkedin";
 };
 
 export const socials: SocialLink[] = [
-  { label: "Email", href: `mailto:danielcai2029@u.northwestern.edu`, glyph: "@" },
-  { label: "GitHub", href: "https://github.com/Danielchf2006", glyph: "GH" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/", glyph: "in" },
+  { label: "Email", href: `mailto:danielcai2029@u.northwestern.edu`, icon: "mail" },
+  { label: "GitHub", href: "https://github.com/Danielchf2006", icon: "github" },
+  // TODO: replace with your LinkedIn handle, e.g. .../in/daniel-cai
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/", icon: "linkedin" },
 ];
 
 export type NavItem = { label: string; href: string };
