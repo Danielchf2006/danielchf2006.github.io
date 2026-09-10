@@ -1,18 +1,50 @@
 ---
 /**
- * Full-screen entry animation. Sits above everything, plays `site.intro.src`
- * (image clip or muted video), then dissolves into the site. Auto-dismisses
- * after `durationMs`; also dismissible by click / any key / scroll.
+ * Entry animation: a CRT boot sequence. A short terminal log types out in the
+ * pixel font, the last line "renders" a mini regression chart, then the whole
+ * screen shatters into a pixel-mosaic dissolve and you land on the site.
  *
- * The <html>.intro-off class (set pre-paint in BaseLayout's head) hides this
- * with display:none before it can flash — for reduced-motion viewers and for
- * repeat visits within a session.
+ * Skippable (click / any key / scroll / the skip button), once per session.
+ * `<html>.intro-off` (set pre-paint in BaseLayout) hides it entirely for
+ * reduced-motion viewers and repeat visits — no flash.
  */
 import { site } from "@/data/site";
 
 const intro = site.intro;
-const src = intro.src.trim();
-const isVideo = /\.(mp4|webm|mov)$/i.test(src);
+
+const BOOT = [
+  "DANIEL_CAI",
+  "data science + economics // northwestern",
+  "",
+  "> mount /experience .......... ok",
+  "> mount /projects ............ ok",
+  "> load calpriceiq.model ...... R²=0.90",
+  "> wake neko .................. ok",
+  "> render --theme cyber-noir",
+];
+
+// mini scatter for the last line — seeded so it's identical every build
+function rng(seed: number) {
+  return () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rand = rng(20280915);
+const CW = 160;
+const CH = 88;
+const gauss = () => (rand() + rand() + rand() + rand() - 2) / 2;
+const pts = Array.from({ length: 26 }, () => {
+  const x = rand();
+  const y = Math.min(1, Math.max(0, x + gauss() * 0.18));
+  return {
+    cx: +(6 + x * (CW - 12)).toFixed(1),
+    cy: +(CH - 6 - y * (CH - 12)).toFixed(1),
+    d: +(rand() * 0.5).toFixed(2),
+  };
+});
 ---
 
 {
@@ -21,31 +53,23 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
       id="intro"
       class="intro"
       data-no-glitch
-      data-duration={intro.durationMs}
       data-once={String(intro.showOncePerSession)}
       role="dialog"
       aria-label="Site intro"
     >
-      <div class:list={["intro__stage", { "is-pixel": intro.pixelated }]}>
-        {src ? (
-          isVideo ? (
-            <video
-              class="intro__media"
-              src={src}
-              autoplay
-              muted
-              playsinline
-              preload="auto"
-            />
-          ) : (
-            <img class="intro__media" src={src} alt="" decoding="async" />
-          )
-        ) : (
-          <div class="intro__placeholder">
-            <span data-text={site.name}>{site.name}</span>
-            <em>loading&hellip;</em>
-          </div>
-        )}
+      <div class="intro__stage">
+        <pre class="boot" data-lines={JSON.stringify(BOOT)}><span class="boot__typed" /><span class="boot__caret">&#9608;</span></pre>
+
+        <figure class="boot__chart" aria-hidden="true">
+          <svg viewBox={`0 0 ${CW} ${CH}`} preserveAspectRatio="xMidYMid meet">
+            <line class="bc-axis" x1="6" y1={CH - 6} x2={CW - 6} y2={CH - 6} />
+            <line class="bc-axis" x1="6" y1="6" x2="6" y2={CH - 6} />
+            <line class="bc-fit" x1="6" y1={CH - 6} x2={CW - 6} y2="6" />
+            {pts.map((p) => (
+              <circle class="bc-pt" cx={p.cx} cy={p.cy} r="1.6" style={`--d:${p.d}s`} />
+            ))}
+          </svg>
+        </figure>
       </div>
 
       <button type="button" class="intro__skip" data-intro-skip>
@@ -57,10 +81,7 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
 
 <script>
   const el = document.getElementById("intro");
-  // skip entirely when the pre-paint script hid the overlay (reduced motion,
-  // or already seen this session) — otherwise we'd scroll-lock behind nothing
   if (el && !document.documentElement.classList.contains("intro-off")) {
-    const dur = Number(el.dataset.duration) || 2400;
     const once = el.dataset.once === "true";
     const root = document.documentElement;
     if (!once) {
@@ -76,13 +97,12 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
       el.remove();
     };
 
-    // exit transition: the overlay shatters into a grid of pixel tiles that
-    // wink out in random order, revealing the site behind
+    // exit: shatter into a grid of pixel tiles that wink out in random order
     const dissolve = () => {
       const stage = el.querySelector<HTMLElement>(".intro__stage");
       const skip = el.querySelector<HTMLElement>(".intro__skip");
       if (stage) {
-        stage.style.transition = "opacity 160ms steps(2)";
+        stage.style.transition = "opacity 140ms steps(2)";
         stage.style.opacity = "0";
       }
       if (skip) skip.style.opacity = "0";
@@ -124,7 +144,7 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
     const finish = () => {
       if (closed) return;
       closed = true;
-      clearTimeout(timer);
+      clearTimeout(hardCap);
       if (once) {
         try {
           sessionStorage.setItem("intro-seen", "1");
@@ -137,14 +157,35 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
       dissolve();
     };
 
-    const timer = setTimeout(finish, dur);
+    // --- the boot type-out ---
+    const pre = el.querySelector<HTMLElement>(".boot");
+    const typed = el.querySelector<HTMLElement>(".boot__typed");
+    const chart = el.querySelector<HTMLElement>(".boot__chart");
+    const lines: string[] = JSON.parse(pre?.dataset.lines ?? "[]");
+    const full = lines.join("\n");
+    let i = 0;
+    const step = () => {
+      if (closed) return;
+      i++;
+      if (typed) typed.textContent = full.slice(0, i);
+      if (i >= full.length) {
+        chart?.classList.add("is-on");
+        setTimeout(finish, 550);
+        return;
+      }
+      const ch = full[i - 1];
+      const delay =
+        ch === "\n" ? 55 : ch === "." ? 2 : ch === " " ? 5 : 5 + Math.random() * 7;
+      setTimeout(step, delay);
+    };
+    setTimeout(step, 80);
+
+    // hard cap in case anything stalls
+    const hardCap = setTimeout(finish, 9000);
     window.addEventListener("keydown", finish, { passive: true });
     window.addEventListener("wheel", finish, { passive: true });
     window.addEventListener("touchmove", finish, { passive: true });
     el.addEventListener("click", finish);
-
-    const media = el.querySelector("img, video");
-    media?.addEventListener("error", () => setTimeout(finish, 200));
   }
 </script>
 
@@ -161,8 +202,99 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
   :global(html.intro-off) .intro {
     display: none;
   }
+  :global(html.intro-lock),
+  :global(html.intro-lock body) {
+    overflow: hidden;
+  }
 
-  /* exit: grid of pixel tiles winking out */
+  .intro__stage {
+    position: relative;
+    z-index: 3;
+    width: min(90vw, 40rem);
+    padding: var(--space-8);
+  }
+
+  .boot {
+    margin: 0;
+    font-family: var(--font-pixel);
+    font-size: clamp(0.8rem, 2.6vw, 1.05rem);
+    line-height: 1.7;
+    color: var(--ink);
+    white-space: pre-wrap;
+    word-break: break-word;
+    -webkit-font-smoothing: none;
+  }
+  /* first two "lines" (name + role) read as a header — handled by the fact
+     that they're just the start of the typed string; tint the whole block
+     with a faint chromatic edge like the rest of the site's glitch text */
+  .boot__typed {
+    text-shadow:
+      0.03em 0 0 var(--glitch-a),
+      -0.03em 0 0 var(--glitch-b);
+  }
+  .boot__caret {
+    color: var(--accent);
+    animation: boot-blink 1s steps(1, end) infinite;
+  }
+  @keyframes boot-blink {
+    0%,
+    55% {
+      opacity: 1;
+    }
+    56%,
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .boot__chart {
+    margin: var(--space-6) 0 0;
+    width: min(60vw, 18rem);
+    opacity: 0;
+    transition: opacity 0.25s steps(3, end);
+  }
+  .boot__chart.is-on {
+    opacity: 0.85;
+  }
+  .boot__chart svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+  }
+  .bc-axis {
+    stroke: var(--line);
+    stroke-width: 1;
+  }
+  .bc-fit {
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-dasharray: 220;
+    stroke-dashoffset: 220;
+  }
+  .bc-pt {
+    fill: var(--accent-2);
+    opacity: 0;
+  }
+  .boot__chart.is-on .bc-fit {
+    animation: bc-draw 0.6s steps(12, end) forwards;
+  }
+  .boot__chart.is-on .bc-pt {
+    animation: bc-pop 0.3s steps(2, end) forwards;
+    animation-delay: var(--d);
+  }
+  @keyframes bc-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes bc-pop {
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* exit mosaic */
   .intro__mask {
     position: absolute;
     inset: 0;
@@ -175,53 +307,6 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
   }
   .intro__mask i.gone {
     opacity: 0;
-  }
-  :global(html.intro-lock),
-  :global(html.intro-lock body) {
-    overflow: hidden;
-  }
-
-  .intro__stage {
-    position: relative;
-    z-index: 3;
-    display: grid;
-    place-items: center;
-    padding: var(--space-8);
-    animation: intro-in 0.5s ease both;
-  }
-  .intro__media {
-    display: block;
-    max-width: min(88vw, 760px);
-    max-height: 78vh;
-    width: auto;
-    height: auto;
-  }
-  .intro__stage.is-pixel .intro__media {
-    image-rendering: pixelated;
-  }
-
-  .intro__placeholder {
-    text-align: center;
-    display: grid;
-    gap: var(--space-3);
-  }
-  .intro__placeholder span {
-    font-family: var(--font-display);
-    font-size: clamp(2.25rem, 9vw, 5rem);
-    line-height: 1;
-    color: var(--ink);
-    text-shadow:
-      0.05em 0 0 var(--glitch-a),
-      -0.05em 0 0 var(--glitch-b);
-    animation: intro-flick 1.1s steps(1, end) infinite;
-  }
-  .intro__placeholder em {
-    font-family: var(--font-mono);
-    font-style: normal;
-    font-size: var(--text-xs);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--muted);
   }
 
   .intro__skip {
@@ -240,31 +325,6 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
   .intro__skip:hover {
     color: var(--ink);
     border-color: var(--accent);
-  }
-
-  @keyframes intro-in {
-    from {
-      opacity: 0;
-      transform: scale(0.96);
-    }
-  }
-  @keyframes intro-flick {
-    0%,
-    100% {
-      text-shadow:
-        0.05em 0 0 var(--glitch-a),
-        -0.05em 0 0 var(--glitch-b);
-    }
-    45% {
-      text-shadow:
-        -0.08em 0.02em 0 var(--glitch-a),
-        0.08em -0.02em 0 var(--glitch-b);
-    }
-    70% {
-      text-shadow:
-        0.03em -0.04em 0 var(--glitch-a),
-        -0.03em 0.04em 0 var(--glitch-b);
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
