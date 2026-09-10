@@ -70,13 +70,61 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
     }
     root.classList.add("intro-lock");
 
+    const done = () => {
+      root.classList.remove("intro-lock");
+      window.dispatchEvent(new Event("intro:done"));
+      el.remove();
+    };
+
+    // exit transition: the overlay shatters into a grid of pixel tiles that
+    // wink out in random order, revealing the site behind
+    const dissolve = () => {
+      const stage = el.querySelector<HTMLElement>(".intro__stage");
+      const skip = el.querySelector<HTMLElement>(".intro__skip");
+      if (stage) {
+        stage.style.transition = "opacity 160ms steps(2)";
+        stage.style.opacity = "0";
+      }
+      if (skip) skip.style.opacity = "0";
+
+      const T = 46;
+      const cols = Math.ceil(window.innerWidth / T);
+      const rows = Math.ceil(window.innerHeight / T);
+      const n = cols * rows;
+      const mask = document.createElement("div");
+      mask.className = "intro__mask";
+      mask.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      mask.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+      const cells: HTMLElement[] = [];
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < n; i++) {
+        const c = document.createElement("i");
+        cells.push(c);
+        frag.appendChild(c);
+      }
+      mask.appendChild(frag);
+      el.appendChild(mask);
+      el.style.background = "transparent";
+
+      const order = [...Array(n).keys()];
+      for (let i = n - 1; i > 0; i--) {
+        const j = (Math.random() * (i + 1)) | 0;
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      requestAnimationFrame(() => {
+        order.forEach((idx, k) => {
+          cells[idx].style.transitionDelay = `${(k / n) * 440}ms`;
+          cells[idx].classList.add("gone");
+        });
+      });
+      setTimeout(done, 980);
+    };
+
     let closed = false;
     const finish = () => {
       if (closed) return;
       closed = true;
       clearTimeout(timer);
-      el.classList.add("intro--out");
-      root.classList.remove("intro-lock");
       if (once) {
         try {
           sessionStorage.setItem("intro-seen", "1");
@@ -86,7 +134,7 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
       window.removeEventListener("wheel", finish);
       window.removeEventListener("touchmove", finish);
       el.removeEventListener("click", finish);
-      setTimeout(() => el.remove(), 650);
+      dissolve();
     };
 
     const timer = setTimeout(finish, dur);
@@ -95,7 +143,6 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
     window.addEventListener("touchmove", finish, { passive: true });
     el.addEventListener("click", finish);
 
-    // if the media fails to load, don't sit on a blank screen
     const media = el.querySelector("img, video");
     media?.addEventListener("error", () => setTimeout(finish, 200));
   }
@@ -109,15 +156,25 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
     background: var(--paper);
     display: grid;
     place-items: center;
-    opacity: 1;
-    transition: opacity 0.6s ease;
-  }
-  .intro--out {
-    opacity: 0;
-    pointer-events: none;
+    overflow: hidden;
   }
   :global(html.intro-off) .intro {
     display: none;
+  }
+
+  /* exit: grid of pixel tiles winking out */
+  .intro__mask {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    z-index: 2;
+  }
+  .intro__mask i {
+    background: var(--paper);
+    transition: opacity 150ms steps(2, end);
+  }
+  .intro__mask i.gone {
+    opacity: 0;
   }
   :global(html.intro-lock),
   :global(html.intro-lock body) {
@@ -125,6 +182,8 @@ const isVideo = /\.(mp4|webm|mov)$/i.test(src);
   }
 
   .intro__stage {
+    position: relative;
+    z-index: 3;
     display: grid;
     place-items: center;
     padding: var(--space-8);

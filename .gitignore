@@ -20,3 +20,6 @@ pnpm-debug.log*
 
 # local resume archive — the published copy lives in public/resume/
 /Resume/
+
+# local design references (gifs, mockups) — not part of the build
+/_art-refs/
