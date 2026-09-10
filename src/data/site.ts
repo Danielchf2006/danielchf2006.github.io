@@ -44,8 +44,7 @@ export type SocialLink = {
 export const socials: SocialLink[] = [
   { label: "Email", href: `mailto:danielcai2029@u.northwestern.edu`, icon: "mail" },
   { label: "GitHub", href: "https://github.com/Danielchf2006", icon: "github" },
-  // TODO: replace with your LinkedIn handle, e.g. .../in/daniel-cai
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/", icon: "linkedin" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/daniel-cai-5b0706261/", icon: "linkedin" },
 ];
 
 export type NavItem = { label: string; href: string };
