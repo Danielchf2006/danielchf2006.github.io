@@ -15,6 +15,10 @@ export const site = {
   location: "Evanston, IL",
   // dropped into /public/resume/ — see that folder's README
   resumePath: "/resume/Daniel-Cai-Resume.pdf",
+  // portrait shown in the homepage hero. Drop a file in /public/images/profile/
+  // and point here (e.g. "/images/profile/daniel.jpg"); leave "" for a
+  // placeholder tile. Either way it's cursor-touchable like the rest of the page.
+  portrait: "",
 } as const;
 
 export type SocialLink = {

@@ -6,6 +6,30 @@
   font-weight: 100 900;
   font-display: swap;
 }
+@font-face {
+  font-family: "NeueBit";
+  src: url("/fonts/NeueBit-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "NeueBit";
+  src: url("/fonts/NeueBit-Bold.woff2") format("woff2");
+  font-weight: 600 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Mondwest";
+  src: url("/fonts/Mondwest-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Mondwest";
+  src: url("/fonts/Mondwest-Bold.woff2") format("woff2");
+  font-weight: 600 900;
+  font-display: swap;
+}
 
 *,
 *::before,
@@ -14,19 +38,17 @@
 }
 
 /*
- * Glitch text: any run of characters mid-scramble gets this. Swaps to the
- * Minecraft pixel font and throws a red/cyan chromatic split that jitters
- * on a stepped loop (colors fixed, offsets animated — same trick as the
- * reference site). `.px` is only ever on transient spans / revealing
- * headings, never resting body copy.
+ * Glitch text: a run of characters that the cursor has touched. Mid-scramble
+ * it churns through glyphs with an animated violet chromatic split (.glitching);
+ * once it settles it KEEPS the pixel font and a frozen split (.px--set) — the
+ * page stays "corrupted" where you've been. `.px` is only ever on transient
+ * spans / revealing headings, never resting body copy by default.
  */
 .px {
   font-family: var(--font-pixel);
   font-weight: 700;
   letter-spacing: 0.02em;
   -webkit-font-smoothing: none;
-  font-smooth: never;
-  /* keeps the bitmap edges crunchy when the browser scales the glyphs */
   text-rendering: optimizeSpeed;
 }
 
@@ -34,41 +56,58 @@
   animation: px-rgb 240ms steps(1, end) infinite;
 }
 
+/* settled-but-permanent: pixel font kept, a quiet static split */
+.px--set {
+  text-shadow:
+    0.045em 0 0 var(--glitch-a),
+    -0.045em 0 0 var(--glitch-b);
+}
+
 @keyframes px-rgb {
   0%,
   100% {
     text-shadow:
-      0.06em 0 0 var(--glitch-red),
-      -0.06em 0 0 var(--glitch-cyan);
+      0.06em 0 0 var(--glitch-a),
+      -0.06em 0 0 var(--glitch-b);
   }
   20% {
     text-shadow:
-      -0.09em 0.03em 0 var(--glitch-red),
-      0.09em -0.03em 0 var(--glitch-cyan);
+      -0.09em 0.03em 0 var(--glitch-a),
+      0.09em -0.03em 0 var(--glitch-b);
   }
   40% {
     text-shadow:
-      0.05em -0.05em 0 var(--glitch-red),
-      -0.05em 0.05em 0 var(--glitch-cyan);
+      0.05em -0.05em 0 var(--glitch-a),
+      -0.05em 0.05em 0 var(--glitch-b);
   }
   60% {
     text-shadow:
-      -0.04em -0.04em 0 var(--glitch-red),
-      0.04em 0.04em 0 var(--glitch-cyan);
+      -0.04em -0.04em 0 var(--glitch-a),
+      0.04em 0.04em 0 var(--glitch-b);
   }
   80% {
     text-shadow:
-      0.1em 0.02em 0 var(--glitch-red),
-      -0.1em -0.02em 0 var(--glitch-cyan);
+      0.1em 0.02em 0 var(--glitch-a),
+      -0.1em -0.02em 0 var(--glitch-b);
   }
+}
+
+/* images the cursor has touched keep a frozen chromatic ghost */
+.img-glitched {
+  filter: saturate(1.25) contrast(1.05)
+    drop-shadow(3px 0 0 var(--glitch-a)) drop-shadow(-3px 0 0 var(--glitch-b));
 }
 
 @media (prefers-reduced-motion: reduce) {
   .px,
-  .px.glitching {
+  .px.glitching,
+  .px--set {
     font-family: inherit;
     animation: none;
     text-shadow: none;
+  }
+  .img-glitched {
+    filter: none;
   }
 }
 
@@ -76,9 +115,12 @@ html {
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-sans);
-  font-size: 16px;
+  /* NeueBit is a bitmap face — bump the base size and kill smoothing so the
+     pixels stay crisp instead of turning into faint grey mush */
+  font-size: 18px;
   line-height: var(--leading-normal);
-  -webkit-font-smoothing: antialiased;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
   scroll-behavior: smooth;
 }
 
@@ -87,6 +129,8 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* NeueBit Regular is a hairline; its Bold cut is the readable body weight */
+  font-weight: 600;
 }
 
 main {
@@ -97,10 +141,11 @@ h1,
 h2,
 h3,
 h4 {
+  font-family: var(--font-display);
   line-height: var(--leading-tight);
-  font-weight: 650;
+  font-weight: 600;
   margin: 0 0 var(--space-4);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 h1 {

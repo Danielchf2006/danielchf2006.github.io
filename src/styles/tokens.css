@@ -9,38 +9,41 @@
  */
 
 :root {
-  /* --- color: light (default) --- */
-  --paper: #fbfbf9; /* page background */
+  /* --- color: light (default), warm violet --- */
+  --paper: #fbfaff; /* page background */
   --surface: #ffffff; /* cards, raised panels */
-  --ink: #16161a; /* primary text */
-  --muted: #5b5b66; /* secondary text */
-  --line: #e6e5e0; /* borders, dividers */
-  --accent: #2b59ff; /* links, emphasis, interactive */
-  --accent-soft: #eaefff; /* accent-tinted fill */
+  --ink: #17151f; /* primary text */
+  --muted: #5f5a70; /* secondary text */
+  --line: #e7e3f1; /* borders, dividers */
+  --accent: #6d33e0; /* links, emphasis, interactive */
+  --accent-soft: #efe8fd; /* accent-tinted fill */
 
   /* --- type --- */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
+  /* NeueBit / Mondwest — "free to try" bitmap fonts by Pangram Pangram,
+     used for personal-portfolio purposes. See public/fonts/README.md. */
+  --font-sans: "NeueBit", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-display: "Mondwest", ui-serif, Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo,
     Consolas, monospace;
   /* Monocraft — a Minecraft-style pixel font (SIL OFL). Used only while text
      is mid-glitch, never for resting copy. See public/fonts/. */
   --font-pixel: "Monocraft", ui-monospace, monospace;
 
-  /* the chromatic-aberration pair, Andrew-style */
-  --glitch-red: #ff2d55;
-  --glitch-cyan: #33ccff;
+  /* chromatic-aberration pair — shifted into the violet family */
+  --glitch-a: #e63fb0; /* magenta-pink */
+  --glitch-b: #6a4bff; /* violet-blue */
 
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.5rem;
-  --text-2xl: 2rem;
-  --text-3xl: 2.75rem;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.1875rem;
+  --text-xl: 1.6rem;
+  --text-2xl: 2.15rem;
+  --text-3xl: 2.9rem;
 
-  --leading-tight: 1.2;
-  --leading-normal: 1.6;
+  --leading-tight: 1.15;
+  --leading-normal: 1.55;
 
   /* --- spacing / layout --- */
   --space-1: 0.25rem;
@@ -59,33 +62,33 @@
   --wide-width: 64rem; /* project grids, wide sections */
 
   --border: 1px solid var(--line);
-  --shadow: 0 1px 2px rgba(20, 20, 30, 0.04), 0 8px 24px rgba(20, 20, 30, 0.06);
+  --shadow: 0 1px 2px rgba(30, 20, 50, 0.05), 0 8px 24px rgba(40, 25, 70, 0.08);
 }
 
-/* --- color: dark --- */
+/* --- color: dark, violet --- */
 :root[data-theme="dark"],
 .dark-block {
-  --paper: #0c0c0e;
-  --surface: #151519;
-  --ink: #ededed;
-  --muted: #9a9aa5;
-  --line: #26262c;
-  --accent: #6f9bff;
-  --accent-soft: #1a2340;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+  --paper: #0c0b12;
+  --surface: #16141f;
+  --ink: #ededf2;
+  --muted: #9c97ac;
+  --line: #29253a;
+  --accent: #a98bff;
+  --accent-soft: #221a3d;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.55);
 }
 
 /* Respect OS preference on first visit (before any manual toggle sets
    data-theme explicitly). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0c0c0e;
-    --surface: #151519;
-    --ink: #ededed;
-    --muted: #9a9aa5;
-    --line: #26262c;
-    --accent: #6f9bff;
-    --accent-soft: #1a2340;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+    --paper: #0c0b12;
+    --surface: #16141f;
+    --ink: #ededf2;
+    --muted: #9c97ac;
+    --line: #29253a;
+    --accent: #a98bff;
+    --accent-soft: #221a3d;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.55);
   }
 }

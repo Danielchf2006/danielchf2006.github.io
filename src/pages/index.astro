@@ -6,6 +6,7 @@ import SectionHeading from "@/components/SectionHeading.astro";
 import ProjectCard from "@/components/ProjectCard.astro";
 import GlitchText from "@/components/GlitchText.astro";
 import HeroChart from "@/components/HeroChart.astro";
+import HoverImage from "@/components/HoverImage.astro";
 import { site } from "@/data/site";
 
 const projects = (await getCollection("projects", (p) => !p.data.draft && p.data.featured)).sort(
@@ -18,15 +19,26 @@ const current = experience.filter((e) => e.data.end === "Present");
 
 <BaseLayout>
   <section class="intro container">
-    <div class="intro__text container--prose">
+    <div class="intro__text">
       <p class="eyebrow">{site.role}</p>
       <GlitchText text={site.name} as="h1" class="intro__name" />
       <p class="intro__tagline">{site.tagline}</p>
       <SocialBar />
     </div>
-    <div class="intro__chart">
-      <HeroChart />
+    <div class="intro__portrait">
+      {
+        site.portrait ? (
+          <HoverImage src={site.portrait} alt={site.fullName} width={480} height={600} loading="eager" />
+        ) : (
+          <span>/images/profile/</span>
+        )
+      }
     </div>
+  </section>
+
+  <section class="container chartband">
+    <p class="eyebrow">// model output</p>
+    <HeroChart />
   </section>
 
   <section class="container container--prose block">
@@ -60,10 +72,14 @@ const current = experience.filter((e) => e.data.end === "Present");
 <style>
   .intro {
     padding-top: var(--space-24);
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-12);
-    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-8) var(--space-12);
+    align-items: start;
+  }
+  .intro__text {
+    flex: 1 1 22rem;
+    max-width: var(--content-width);
   }
   .intro__name {
     font-size: var(--text-3xl);
@@ -74,19 +90,28 @@ const current = experience.filter((e) => e.data.end === "Present");
     color: var(--muted);
     margin-bottom: var(--space-8);
   }
-  .intro__chart {
-    max-width: 34rem;
-    width: 100%;
-    justify-self: center;
+  .intro__portrait {
+    flex: 0 0 auto;
+    width: 12rem;
+    aspect-ratio: 4 / 5;
+    border: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--accent-soft);
+    display: grid;
+    place-items: center;
   }
-  @media (min-width: 60rem) {
-    .intro {
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: var(--space-16);
-    }
-    .intro__chart {
-      justify-self: end;
-    }
+  .intro__portrait span {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+  .chartband {
+    margin-top: var(--space-12);
+    max-width: 44rem;
+  }
+  .chartband .eyebrow {
+    margin-bottom: var(--space-4);
   }
   .block {
     margin-top: var(--space-16);
