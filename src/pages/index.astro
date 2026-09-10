@@ -97,14 +97,16 @@ const current = experience.filter((e) => e.data.end === "Present");
     border: var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    background: var(--accent-soft);
+    background-color: var(--surface);
+    background-image: var(--dither);
+    background-size: var(--dither-size);
     display: grid;
     place-items: center;
   }
   .intro__portrait span {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    color: var(--muted);
+    color: var(--accent-2);
   }
   .chartband {
     margin-top: var(--space-12);

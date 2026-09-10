@@ -65,6 +65,7 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     </script>
   </head>
   <body>
+    <div class="crt" aria-hidden="true"></div>
     <IntroOverlay />
     <a class="skip-link" href="#main">Skip to content</a>
     {!bareHeader && <Nav />}

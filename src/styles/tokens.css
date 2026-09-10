@@ -2,21 +2,22 @@
  * Design tokens — single source of truth for color, type, spacing.
  * Nothing in the site should hardcode a hex, a font stack, or a raw size.
  *
- * Theme model: light is the default. `[data-theme="dark"]` on <html> flips
- * the whole page. `.dark-block` forces the dark palette on a subtree
- * regardless of the page theme — used for project demo heroes and feature
- * strips (the "dark accents" half of the hybrid look).
+ * Theme model: DARK is the default (this is a cyber-noir pixel site). Light is
+ * an opt-in via `[data-theme="light"]`, or the OS preference on first visit.
+ * `.dark-block` pins the dark palette on a subtree even under the light theme.
  */
 
 :root {
-  /* --- color: light (default), warm violet --- */
-  --paper: #fbfaff; /* page background */
-  --surface: #ffffff; /* cards, raised panels */
-  --ink: #17151f; /* primary text */
-  --muted: #5f5a70; /* secondary text */
-  --line: #e7e3f1; /* borders, dividers */
-  --accent: #6d33e0; /* links, emphasis, interactive */
-  --accent-soft: #efe8fd; /* accent-tinted fill */
+  /* --- color: dark (default), violet + teal cyber-noir --- */
+  --paper: #0b0a11; /* page background — near-black violet */
+  --surface: #14121d; /* cards, raised panels */
+  --panel: #191621; /* slightly lifted fills */
+  --ink: #edecf5; /* primary text */
+  --muted: #a19cb6; /* secondary text */
+  --line: #2b2640; /* borders, dividers */
+  --accent: #b79dff; /* violet — links, emphasis, interactive */
+  --accent-2: #45e0c8; /* teal — secondary accent, highlights */
+  --accent-soft: #1d1733; /* violet-tinted fill */
 
   /* --- type --- */
   /* NeueBit / Mondwest — "free to try" bitmap fonts by Pangram Pangram,
@@ -30,9 +31,9 @@
      is mid-glitch, never for resting copy. See public/fonts/. */
   --font-pixel: "Monocraft", ui-monospace, monospace;
 
-  /* chromatic-aberration pair — shifted into the violet family */
-  --glitch-a: #e63fb0; /* magenta-pink */
-  --glitch-b: #6a4bff; /* violet-blue */
+  /* chromatic-aberration pair */
+  --glitch-a: #ff3fb0; /* magenta-pink */
+  --glitch-b: #45e0c8; /* teal */
 
   --text-xs: 0.8125rem;
   --text-sm: 0.9375rem;
@@ -56,39 +57,71 @@
   --space-16: 4rem;
   --space-24: 6rem;
 
-  --radius: 10px;
-  --radius-sm: 6px;
+  /* pixel UI: hard edges, no rounding */
+  --radius: 0px;
+  --radius-sm: 0px;
   --content-width: 46rem; /* prose / resume column */
   --wide-width: 64rem; /* project grids, wide sections */
 
   --border: 1px solid var(--line);
-  --shadow: 0 1px 2px rgba(30, 20, 50, 0.05), 0 8px 24px rgba(40, 25, 70, 0.08);
+  --border-bold: 2px solid var(--ink);
+  /* hard offset shadow — no blur, reads as a pixel drop */
+  --shadow: 4px 4px 0 var(--line);
+  --shadow-lift: 6px 6px 0 var(--accent-soft);
+
+  /* 2px dither tile, violet on transparent — layered over a bg color */
+  --dither: repeating-conic-gradient(
+    var(--accent-soft) 0% 25%,
+    transparent 0% 50%
+  );
+  --dither-size: 4px 4px;
+
+  color-scheme: dark;
 }
 
-/* --- color: dark, violet --- */
-:root[data-theme="dark"],
-.dark-block {
-  --paper: #0c0b12;
-  --surface: #16141f;
-  --ink: #ededf2;
-  --muted: #9c97ac;
-  --line: #29253a;
-  --accent: #a98bff;
-  --accent-soft: #221a3d;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.55);
+/* --- color: light — opt-in --- */
+:root[data-theme="light"] {
+  --paper: #f6f4fc;
+  --surface: #ffffff;
+  --panel: #efecf8;
+  --ink: #17151f;
+  --muted: #5f5a70;
+  --line: #d9d3ec;
+  --accent: #6d33e0;
+  --accent-2: #0aa79a;
+  --accent-soft: #ece4fb;
+  --shadow: 4px 4px 0 var(--line);
+  --shadow-lift: 6px 6px 0 var(--accent-soft);
+  color-scheme: light;
 }
 
-/* Respect OS preference on first visit (before any manual toggle sets
-   data-theme explicitly). */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #0c0b12;
-    --surface: #16141f;
-    --ink: #ededf2;
-    --muted: #9c97ac;
-    --line: #29253a;
-    --accent: #a98bff;
-    --accent-soft: #221a3d;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.55);
+/* honour an OS light preference on first visit (before the toggle sets
+   data-theme explicitly) */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --paper: #f6f4fc;
+    --surface: #ffffff;
+    --panel: #efecf8;
+    --ink: #17151f;
+    --muted: #5f5a70;
+    --line: #d9d3ec;
+    --accent: #6d33e0;
+    --accent-2: #0aa79a;
+    --accent-soft: #ece4fb;
+    color-scheme: light;
   }
+}
+
+/* pin dark on a subtree regardless of theme (project heroes) */
+.dark-block {
+  --paper: #0b0a11;
+  --surface: #14121d;
+  --panel: #191621;
+  --ink: #edecf5;
+  --muted: #a19cb6;
+  --line: #2b2640;
+  --accent: #b79dff;
+  --accent-2: #45e0c8;
+  --accent-soft: #1d1733;
+  color-scheme: dark;
 }

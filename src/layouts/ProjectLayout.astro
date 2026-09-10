@@ -107,7 +107,8 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
 <style>
   .hero {
     padding: var(--space-16) 0 var(--space-12);
-    border-bottom: var(--border);
+    background: var(--surface);
+    border-bottom: 2px solid var(--accent);
   }
   .hero__back {
     font-family: var(--font-mono);
@@ -207,7 +208,7 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     border: var(--border);
-    border-radius: 999px;
+    border-radius: var(--radius);
     padding: 0.2rem 0.6rem;
   }
 </style>

@@ -121,7 +121,9 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
   }
   .card__media {
     aspect-ratio: 16 / 10;
-    background: var(--accent-soft);
+    background-color: var(--surface);
+    background-image: var(--dither);
+    background-size: var(--dither-size);
     border-bottom: var(--border);
   }
   .card__placeholder {
@@ -131,7 +133,7 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
     place-items: center;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    color: var(--muted);
+    color: var(--accent-2);
   }
   .card__body {
     padding: var(--space-6);
@@ -182,7 +184,7 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
     font-size: var(--text-xs);
     color: var(--muted);
     border: var(--border);
-    border-radius: 999px;
+    border-radius: var(--radius);
     padding: 0.15rem 0.55rem;
   }
 

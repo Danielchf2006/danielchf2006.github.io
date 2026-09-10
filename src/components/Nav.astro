@@ -42,11 +42,13 @@ const isActive = (href: string) =>
     const root = document.documentElement;
 
     function current() {
+      // dark is the site default — only an explicit choice or an OS light
+      // preference makes it light
       return (
         root.getAttribute("data-theme") ||
-        (window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light")
+        (window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark")
       );
     }
     function render() {
