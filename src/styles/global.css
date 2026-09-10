@@ -38,11 +38,11 @@
 }
 
 /*
- * Glitch text: a run of characters that the cursor has touched. Mid-scramble
- * it churns through glyphs with an animated violet chromatic split (.glitching);
- * once it settles it KEEPS the pixel font and a frozen split (.px--set) — the
- * page stays "corrupted" where you've been. `.px` is only ever on transient
- * spans / revealing headings, never resting body copy by default.
+ * Glitch text: the run of characters currently under the cursor. Swaps to the
+ * pixel font and churns through glyphs with an animated violet chromatic
+ * split (.glitching). Removed the moment the cursor leaves — nothing persists.
+ * `.px` is only ever on transient spans / revealing headings, never resting
+ * body copy.
  */
 .px {
   font-family: var(--font-pixel);
@@ -54,13 +54,6 @@
 
 .px.glitching {
   animation: px-rgb 240ms steps(1, end) infinite;
-}
-
-/* settled-but-permanent: pixel font kept, a quiet static split */
-.px--set {
-  text-shadow:
-    0.045em 0 0 var(--glitch-a),
-    -0.045em 0 0 var(--glitch-b);
 }
 
 @keyframes px-rgb {
@@ -92,7 +85,7 @@
   }
 }
 
-/* images the cursor has touched keep a frozen chromatic ghost */
+/* an image while the cursor is over it — chromatic ghost, cleared on exit */
 .img-glitched {
   filter: saturate(1.25) contrast(1.05)
     drop-shadow(3px 0 0 var(--glitch-a)) drop-shadow(-3px 0 0 var(--glitch-b));
@@ -100,8 +93,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .px,
-  .px.glitching,
-  .px--set {
+  .px.glitching {
     font-family: inherit;
     animation: none;
     text-shadow: none;

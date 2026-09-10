@@ -1,32 +1,43 @@
 /**
- * Cursor-local, PERSISTENT text/image glitch.
+ * Cursor-local text/image glitch — active ONLY while hovered.
  *
- * As the pointer moves over the page:
- *  - text: the few characters directly under it flip to the Monocraft pixel
- *    font, scramble through glyphs with a violet chromatic split, then settle
- *    back to the real text — but KEEP the pixel font + a frozen split. The
- *    page stays "corrupted" wherever the cursor has been.
- *  - images: get a permanent frozen chromatic ghost.
+ * Move the pointer over the page and:
+ *  - text: the ~8 characters where the cursor entered an element flip to the
+ *    Monocraft pixel font and churn through glyphs with a violet chromatic
+ *    split, holding while the cursor stays anywhere on that element. Leave the
+ *    element and they snap straight back to normal.
+ *  - images: get a chromatic ghost that clears the moment the cursor leaves.
  *
- * The real text is never lost: a <span class="px"> is spliced in around the
- * touched characters and simply left there once settled. Opt any subtree out
- * with [data-no-glitch].
+ * The real text is never lost: a transient <span class="px"> is spliced in
+ * around the touched characters and removed on exit, merging the text node
+ * back exactly as it was. Opt any subtree out with [data-no-glitch].
  */
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789§#%&/\\<>=+*?!{}[]".split("");
-const RADIUS = 4; // chars each side of the cursor
-const CHURN_MS = 40; // ms between scramble frames
-const SETTLE_MS = 420; // ms of churn before it freezes
-const REGION_COOLDOWN = 40; // ms before an element sparks again (progressive sweep)
+const RADIUS = 4; // chars each side of the entry point
+const CHURN_MS = 45; // ms between scramble frames
+const SETTLE_MS = 300; // churn hard for this long, then hold the real text
 const MOVE_THROTTLE = 40;
+const EXIT_GRACE = 80; // ms grace after leaving, so word-gaps don't flicker
 
 const reduce =
   typeof window !== "undefined" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const rnd = <T>(a: T[]) => a[(Math.random() * a.length) | 0];
-const animating = new Set<Text | Element>();
-const cooldownUntil = new WeakMap<Element, number>();
+
+type Patch = {
+  parent: HTMLElement;
+  before: Text;
+  span: HTMLSpanElement;
+  after: Text;
+  orig: string;
+  timer: number;
+};
+
+let patch: Patch | null = null;
+let glitchedImg: HTMLImageElement | null = null;
+let exitTimer = 0;
 
 function caretFromPoint(
   x: number,
@@ -39,46 +50,71 @@ function caretFromPoint(
     ) => { offsetNode: Node; offset: number } | null;
     caretRangeFromPoint?: (x: number, y: number) => Range | null;
   };
+  let node: Text | null = null;
+  let offset = 0;
   if (doc.caretPositionFromPoint) {
     const pos = doc.caretPositionFromPoint(x, y);
-    if (pos && pos.offsetNode.nodeType === Node.TEXT_NODE)
-      return { node: pos.offsetNode as Text, offset: pos.offset };
+    if (pos && pos.offsetNode.nodeType === Node.TEXT_NODE) {
+      node = pos.offsetNode as Text;
+      offset = pos.offset;
+    }
   } else if (doc.caretRangeFromPoint) {
     const range = doc.caretRangeFromPoint(x, y);
-    if (range && range.startContainer.nodeType === Node.TEXT_NODE)
-      return { node: range.startContainer as Text, offset: range.startOffset };
+    if (range && range.startContainer.nodeType === Node.TEXT_NODE) {
+      node = range.startContainer as Text;
+      offset = range.startOffset;
+    }
   }
-  return null;
+  if (!node) return null;
+
+  // caretPositionFromPoint snaps to the NEAREST text even when the point is
+  // in empty space — verify the cursor is actually over a glyph
+  const len = node.nodeValue?.length ?? 0;
+  const r = document.createRange();
+  r.setStart(node, Math.min(offset, Math.max(0, len - 1)));
+  r.setEnd(node, Math.min(offset + 1, len));
+  const box = r.getBoundingClientRect();
+  if (
+    x < box.left - 6 ||
+    x > box.right + 6 ||
+    y < box.top - 3 ||
+    y > box.bottom + 3
+  )
+    return null;
+
+  return { node, offset };
 }
 
 function eligible(parent: Element | null): parent is HTMLElement {
   if (!parent) return false;
   const tag = parent.tagName;
   if (tag === "SCRIPT" || tag === "STYLE" || tag === "NOSCRIPT") return false;
-  if (parent.classList.contains("px")) return false; // already glitched
+  if (parent.classList.contains("px")) return false;
   if (parent.closest("[data-no-glitch]")) return false;
   return true;
 }
 
-function sparkText(x: number, y: number) {
-  const caret = caretFromPoint(x, y);
-  if (!caret) return;
-  const { node } = caret;
+function restorePatch() {
+  if (!patch) return;
+  clearInterval(patch.timer);
+  const { parent, before, span, after, orig } = patch;
+  if (span.parentNode === parent) {
+    parent.replaceChild(document.createTextNode(orig), span);
+    if (before.parentNode === parent) parent.removeChild(before);
+    if (after.parentNode === parent) parent.removeChild(after);
+    parent.normalize();
+  }
+  patch = null;
+}
+
+function makePatch(node: Text, offset: number) {
   const parent = node.parentElement;
   if (!eligible(parent)) return;
-
-  const now = performance.now();
-  if ((cooldownUntil.get(parent) ?? 0) > now) return;
-  if (animating.has(node)) return;
-
   const text = node.nodeValue ?? "";
-  const start = Math.max(0, caret.offset - RADIUS);
-  const end = Math.min(text.length, caret.offset + RADIUS);
+  const start = Math.max(0, offset - RADIUS);
+  const end = Math.min(text.length, offset + RADIUS);
   const slice = text.slice(start, end);
   if (!slice.trim()) return;
-
-  cooldownUntil.set(parent, now + REGION_COOLDOWN);
-  animating.add(node);
 
   const before = document.createTextNode(text.slice(0, start));
   const after = document.createTextNode(text.slice(end));
@@ -89,34 +125,39 @@ function sparkText(x: number, y: number) {
   parent.insertBefore(span, after);
   parent.insertBefore(before, span);
 
-  const started = performance.now();
-  const id = window.setInterval(() => {
-    const t = (performance.now() - started) / SETTLE_MS;
+  const startedAt = performance.now();
+  const timer = window.setInterval(() => {
+    const settle = (performance.now() - startedAt) / SETTLE_MS;
     span.textContent = slice
       .split("")
       .map((ch, i) =>
-        ch === " " ? " " : i / slice.length < t - 0.15 ? ch : rnd(GLYPHS),
+        ch === " " ? " " : i / slice.length < settle - 0.15 ? ch : rnd(GLYPHS),
       )
       .join("");
-    if (t >= 1) {
-      clearInterval(id);
-      span.textContent = slice; // real text, kept
-      span.className = "px px--set"; // frozen — pixel font + static split stay
-      animating.delete(node);
-    }
   }, CHURN_MS);
+
+  patch = { parent, before, span, after, orig: text, timer };
 }
 
-function sparkImage(el: Element) {
+function onImage(el: Element) {
   const img =
     el.tagName === "IMG"
       ? (el as HTMLImageElement)
-      : el.closest(".hoverimg")?.querySelector("img") ?? null;
-  if (!img || img.classList.contains("img-glitched")) return;
-  if (img.closest("[data-no-glitch]")) return;
-  img.classList.add("img-glitched");
-  // let a wrapped HoverImage also run its pixelate burst
-  el.closest(".hoverimg")?.dispatchEvent(new Event("mouseenter"));
+      : (el.closest(".hoverimg")?.querySelector("img") as HTMLImageElement | null);
+  if (!img || img.closest("[data-no-glitch]")) return;
+  if (glitchedImg && glitchedImg !== img) glitchedImg.classList.remove("img-glitched");
+  if (img !== glitchedImg) {
+    img.classList.add("img-glitched");
+    el.closest(".hoverimg")?.dispatchEvent(new Event("mouseenter"));
+    glitchedImg = img;
+  }
+}
+
+function clearImage() {
+  if (glitchedImg) {
+    glitchedImg.classList.remove("img-glitched");
+    glitchedImg = null;
+  }
 }
 
 if (!reduce) {
@@ -129,16 +170,47 @@ if (!reduce) {
       if (now - last < MOVE_THROTTLE) return;
       last = now;
 
-      const target = document.elementFromPoint(e.clientX, e.clientY);
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+
+      // --- image hover ---
+      if (el && (el.tagName === "IMG" || el.closest(".hoverimg"))) {
+        clearTimeout(exitTimer);
+        restorePatch();
+        onImage(el);
+        return;
+      }
+      clearImage();
+
+      // --- still hovering the current patch's element? keep it. ---
       if (
-        target &&
-        (target.tagName === "IMG" || target.closest(".hoverimg"))
+        patch &&
+        el &&
+        (el === patch.span ||
+          patch.span.contains(el) ||
+          patch.parent === el ||
+          patch.parent.contains(el))
       ) {
-        sparkImage(target);
-      } else {
-        sparkText(e.clientX, e.clientY);
+        clearTimeout(exitTimer);
+        return;
+      }
+
+      // --- moved somewhere new ---
+      const caret = caretFromPoint(e.clientX, e.clientY);
+      if (caret && eligible(caret.node.parentElement)) {
+        clearTimeout(exitTimer);
+        restorePatch();
+        makePatch(caret.node, caret.offset);
+      } else if (patch) {
+        clearTimeout(exitTimer);
+        exitTimer = window.setTimeout(restorePatch, EXIT_GRACE);
       }
     },
     { passive: true },
   );
+
+  window.addEventListener("pointerleave", () => {
+    restorePatch();
+    clearImage();
+  });
+  document.addEventListener("scroll", () => restorePatch(), { passive: true });
 }
