@@ -57,8 +57,8 @@ const current = experience.filter((e) => e.data.end === "Present");
         class="obsessed__img"
         src="/images/obsession/fighters.png"
         alt={`${site.obsession.label} — pixel art`}
-        width="589"
-        height="485"
+        width="557"
+        height="449"
         loading="lazy"
         decoding="async"
       />
@@ -124,18 +124,27 @@ const current = experience.filter((e) => e.data.end === "Present");
     font-size: var(--text-xs);
     color: var(--accent-2);
   }
-  /* two columns: the professional "currently" and the playful "crazy about" */
+  /* two columns: the professional "currently" and the playful "crazy about".
+     the right column lines up flush with the hero portrait above it. */
   .split {
     margin-top: var(--space-16);
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-12);
+    grid-template-columns: 1fr 20rem;
+    gap: var(--space-8) var(--space-16);
     align-items: start;
   }
-  @media (max-width: 46rem) {
+  .split__crazy {
+    justify-self: end;
+  }
+  @media (max-width: 52rem) {
     .split {
       grid-template-columns: 1fr;
       gap: var(--space-10);
+    }
+    .split__crazy {
+      justify-self: start;
+      width: 100%;
+      max-width: 22rem;
     }
   }
   .split .eyebrow {
@@ -170,7 +179,6 @@ const current = experience.filter((e) => e.data.end === "Present");
   .obsessed__img {
     display: block;
     width: 100%;
-    max-width: 20rem;
     height: auto;
     border: var(--border);
     image-rendering: pixelated;

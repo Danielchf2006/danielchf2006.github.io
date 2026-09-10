@@ -6,14 +6,13 @@
 export const site = {
   name: "Daniel Cai",
   fullName: "Daniel (Haofan) Cai",
-  role: "Statistics + Economics · Data Science minor // UC Berkeley",
-  // one line under the name. PLACEHOLDER — this is just the right shape/length;
-  // swap in your own wording.
+  role: "Data Science & Economics // Northwestern",
+  // one or two sentences under the name
   tagline:
-    "Full-stack engineer & ML researcher — 40+ shipped products, a U.S. patent, NLP research in 10+ journals.",
+    "Data Science & Economics student at Northwestern. I lead risk modeling for GridGate's queue-projection team, and intern in strategy at Fantuan Delivery and policy-risk analysis at Zenitera Funds. I also built an XGBoost home-price model for IDXExchange.",
   url: "https://danielchf2006.github.io",
   email: "danielcai2029@u.northwestern.edu",
-  location: "Berkeley, CA",
+  location: "Evanston, IL",
   // one-page PDF — drop it in /public/resume/ (see that folder's README)
   resumePath: "/resume/Daniel-Cai-Resume.pdf",
   // the homepage "crazy about — last 7 days" callout
