@@ -19,6 +19,19 @@ export const site = {
   // and point here (e.g. "/images/profile/daniel.jpg"); leave "" for a
   // placeholder tile. Either way it's cursor-touchable like the rest of the page.
   portrait: "",
+  // full-screen entry animation. Drop a file in /public/intro/ and point `src`
+  // at it — .gif / .webp / .apng, or .mp4 / .webm (much smaller than a GIF).
+  // Leave src "" to use the built-in animated placeholder.
+  intro: {
+    enabled: true,
+    src: "",
+    // how long the overlay holds before it dissolves (ms). Match your clip.
+    durationMs: 2600,
+    // true: plays once per browser session. false: every page load.
+    showOncePerSession: true,
+    // crisp-scale the media instead of smoothing it (for pixel-art clips)
+    pixelated: true,
+  },
 } as const;
 
 export type SocialLink = {

@@ -2,6 +2,7 @@
 import "@/styles/global.css";
 import Nav from "@/components/Nav.astro";
 import Footer from "@/components/Footer.astro";
+import IntroOverlay from "@/components/IntroOverlay.astro";
 import { site } from "@/data/site";
 
 interface Props {
@@ -46,19 +47,25 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <meta property="og:image" content={new URL("/images/og/og.png", site.url).href} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    {/* set the theme before first paint to avoid a flash */}
+    {/* set theme + decide intro visibility before first paint (no flash) */}
     <script is:inline>
       (function () {
+        var root = document.documentElement;
         try {
           var t = localStorage.getItem("theme");
-          if (t === "light" || t === "dark") {
-            document.documentElement.setAttribute("data-theme", t);
-          }
+          if (t === "light" || t === "dark") root.setAttribute("data-theme", t);
+        } catch (e) {}
+        try {
+          var skip =
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+            sessionStorage.getItem("intro-seen") === "1";
+          if (skip) root.classList.add("intro-off");
         } catch (e) {}
       })();
     </script>
   </head>
   <body>
+    <IntroOverlay />
     <a class="skip-link" href="#main">Skip to content</a>
     {!bareHeader && <Nav />}
     <main id="main">
