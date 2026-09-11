@@ -28,7 +28,7 @@ export const skillGroups: SkillGroup[] = [
     ],
     evidence: [
       { label: "CalPriceIQ", href: "/projects/calpriceiq" },
-      { label: "GridGate", href: "/experience#gridgate" },
+      { label: "GridGate", href: "/projects/gridgate" },
       { label: "DSAC Datathon", href: "/projects/dsac-datathon-2026" },
     ],
   },
@@ -45,28 +45,31 @@ export const skillGroups: SkillGroup[] = [
       "docx → JSONL parsing",
     ],
     evidence: [
-      { label: "Zenitera contract parser", href: "/experience#zenitera-funds" },
-      { label: "GridGate scrapers", href: "/experience#gridgate" },
+      { label: "Contract Review Pipeline", href: "/projects/zenitera-contracts" },
+      { label: "GridGate", href: "/projects/gridgate" },
     ],
   },
   {
     name: "LLM / Applied AI",
-    blurb: "Classification pipelines, evaluation, and prompt/model A/B testing.",
+    blurb: "Classification pipelines, agentic pipelines, evaluation, and model A/B testing.",
     skills: [
       "LLM classification pipelines",
       "Taxonomy design",
       "Ground-truth labeling",
+      "Agentic pipeline design",
       "Model A/B testing (Kimi k3 vs Opus 5)",
     ],
     evidence: [
-      { label: "Zenitera Funds", href: "/experience#zenitera-funds" },
+      { label: "Contract Review Pipeline", href: "/projects/zenitera-contracts" },
+      { label: "BridgeLytic Agentic Work OS", href: "/projects/bridgelytic" },
     ],
   },
   {
     name: "Analysis & Visualization",
     blurb: "Turning findings into dashboards and decks stakeholders act on.",
-    skills: ["Tableau", "Matplotlib", "Seaborn", "Excel", "PowerPoint", "R"],
+    skills: ["Tableau", "Matplotlib", "Seaborn", "Streamlit", "Excel", "PowerPoint", "R"],
     evidence: [
+      { label: "CalPriceIQ", href: "/projects/calpriceiq" },
       { label: "DSAC Datathon", href: "/projects/dsac-datathon-2026" },
       { label: "Fantuan Delivery", href: "/experience#fantuan-delivery" },
     ],
@@ -84,7 +87,8 @@ export const skillGroups: SkillGroup[] = [
     ],
     evidence: [
       { label: "Fantuan Delivery", href: "/experience#fantuan-delivery" },
-      { label: "GridGate", href: "/experience#gridgate" },
+      { label: "GridGate", href: "/projects/gridgate" },
+      { label: "BridgeLytic", href: "/projects/bridgelytic" },
     ],
   },
 ];

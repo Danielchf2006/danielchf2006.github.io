@@ -178,6 +178,32 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
     border-radius: var(--radius);
     margin: var(--space-6) 0;
   }
+  .prose :global(table) {
+    width: 100%;
+    margin: var(--space-6) 0;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+  }
+  .prose :global(th),
+  .prose :global(td) {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: var(--border);
+    text-align: left;
+  }
+  .prose :global(th) {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    border-bottom: 2px solid var(--accent);
+  }
+  .prose :global(td) {
+    font-variant-numeric: tabular-nums;
+  }
+  .prose :global(tr:last-child td) {
+    border-bottom: none;
+  }
 
   .demo {
     margin-top: var(--space-16);

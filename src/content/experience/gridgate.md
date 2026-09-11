@@ -15,9 +15,7 @@ highlights:
   - Built cost-projection models forecasting interconnection costs, enabling ~$500k savings per project.
 ---
 
-<!-- Optional: longer narrative for the /experience page. Keep the frontmatter
-     bullets as the quick-scan version; use this body for context, a chart, or
-     a screenshot once you have one.
-
-     Images for this role go in /public/images/experience/gridgate/ (create the
-     folder when you need it). -->
+The risk modeling, cost/timeline projection, and regulatory-scraper work
+from this role is written up in full as the
+[GridGate Interconnection Risk & Regulatory Intelligence](/projects/gridgate)
+project.
