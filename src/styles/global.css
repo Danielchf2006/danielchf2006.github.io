@@ -123,8 +123,36 @@ body {
   flex-direction: column;
   /* NeueBit Regular is a hairline; its Bold cut is the readable body weight */
   font-weight: 600;
-  /* faint pixel-grid texture + a low glow so the page never reads dead-flat */
+  /* a pixel dusk sky behind the hero, scrimmed down to solid --paper by the
+     time content gets dense — fixed so it reads as a backdrop, not something
+     that scrolls away after one section */
   background-color: var(--paper);
+  background-image:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--paper) 35%, transparent) 0%,
+      color-mix(in srgb, var(--paper) 70%, transparent) 45%,
+      var(--paper) 82%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--ink) 3%, transparent) 0 1px,
+      transparent 1px 6px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--ink) 3%, transparent) 0 1px,
+      transparent 1px 6px
+    ),
+    url("/images/bg-sky.jpg");
+  background-repeat: no-repeat, repeat, repeat, no-repeat;
+  background-size: auto, auto, auto, cover;
+  background-position: top, top, top, top center;
+  background-attachment: fixed, scroll, scroll, fixed;
+}
+
+/* the sky is a dark-theme thing — plain paper in light mode */
+:root[data-theme="light"] body {
   background-image:
     radial-gradient(
       120% 80% at 50% -10%,
@@ -142,6 +170,27 @@ body {
       transparent 1px 6px
     );
   background-attachment: fixed;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) body {
+    background-image:
+      radial-gradient(
+        120% 80% at 50% -10%,
+        color-mix(in srgb, var(--accent) 8%, transparent),
+        transparent 60%
+      ),
+      repeating-linear-gradient(
+        0deg,
+        color-mix(in srgb, var(--ink) 3%, transparent) 0 1px,
+        transparent 1px 6px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--ink) 3%, transparent) 0 1px,
+        transparent 1px 6px
+      );
+    background-attachment: fixed;
+  }
 }
 
 ::selection {
