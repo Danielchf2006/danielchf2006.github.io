@@ -1,6 +1,6 @@
 ---
 org: Allvue Systems
-role: Revenue Intelligence & Agentic Systems Intern
+role: Revenue Intelligence & Agentic Systems Intern — BridgeLytic Team
 location: Chicago, IL
 start: "2026-09"
 end: Present
@@ -10,5 +10,4 @@ tags: []
 highlights: []
 ---
 
-Offered after the [BridgeLytic Agentic Work OS](/projects/bridgelytic)
-take-home case study. Just getting started — nothing to report yet.
+Just getting started — nothing to report yet.

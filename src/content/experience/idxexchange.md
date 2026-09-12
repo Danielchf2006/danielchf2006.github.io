@@ -3,8 +3,8 @@ org: IDXExchange
 role: Data Science Intern
 location: Boise, ID
 start: "2026-06"
-end: Present
-dates: Jun 2026 – Present
+end: "2026-09"
+dates: Jun 2026 – Sep 2026
 order: 4
 tags: [XGBoost, Feature Engineering, Leakage Detection, Tableau, SQL]
 highlights:
