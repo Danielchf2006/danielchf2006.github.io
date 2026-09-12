@@ -3,7 +3,7 @@ title: "California Home Price Predictor — DS51 Capstone"
 summary: A 6-person Northwestern DS 51 capstone sponsored by IDX Exchange — I led the modeling pipeline end to end, through a judged final presentation and a live Streamlit app.
 order: 1.5
 featured: true
-role: Lead Modeler — 6-Person Capstone Team
+role: Team Member — 6-Person Capstone Team
 org: "Northwestern DS 51 (sponsor: IDX Exchange)"
 dates: Summer 2026
 location: Evanston, IL
