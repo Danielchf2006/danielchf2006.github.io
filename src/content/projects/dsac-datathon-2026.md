@@ -13,8 +13,7 @@ metrics:
   - { label: "Reviews analyzed", value: "967K+" }
   - { label: "CV R²", value: "0.71" }
   - { label: "Businesses", value: "14.6K" }
-# add public/images/projects/dsac-datathon-2026/cover.jpg then uncomment:
-# cover: cover.jpg
+cover: locations-by-rating.jpg
 coverAlt: "DSAC Datathon — cheesesteak restaurant rating model"
 links:
   - { label: "Slide deck", href: "https://danielchf2006.github.io/decks/dsac-datathon-2026.pdf" }
@@ -78,6 +77,15 @@ made the answer legible rather than just accurate:
 | `word_len_mean` | −0.066 | Longer reviews skew less favorable |
 | `latitude` | −0.046 | A small residual geographic effect |
 
+<figure>
+
+![Top 10 LassoCV coefficients by absolute value — sentiment features dominate](/images/projects/dsac-datathon-2026/lasso-coefficients.jpg)
+
+<figcaption>Lasso's sparsity at work: of the dozens of candidate features,
+only ten survive with a non-zero coefficient — and the top four are all
+sentiment.</figcaption>
+</figure>
+
 **Customer sentiment dominates everything else.** The two strongest
 predictors by a wide margin are both sentiment features; every non-text
 business attribute we tested — parking type, BYOB, dog-friendliness,
@@ -85,6 +93,16 @@ ambience tags — correlated with rating at strength well under 0.3.
 `DriveThru` was the one outlier at −0.61, though with a sample that small
 for a sit-down cuisine like cheesesteaks, we treated that as a data-quirk
 worth flagging rather than a recommendation.
+
+<figure>
+
+![Top 20 significant business-attribute correlations with star rating — DriveThru is the outlier at -0.61](/images/projects/dsac-datathon-2026/attribute-correlations.jpg)
+
+<figcaption>Every structural attribute we tested, ranked by raw correlation
+with rating. <code>DriveThru</code> is the one that breaks the "nothing
+structural matters much" pattern — and the sample is small enough that we
+flagged it rather than built on it.</figcaption>
+</figure>
 
 **The two models we ran on operating hours disagreed, and that
 disagreement was itself informative.** For a secondary question — does
@@ -98,11 +116,32 @@ cleaner versions of each other — they emphasized genuinely different
 features, which told us this sub-question needed more data before either
 model's story should be trusted.
 
+<figure>
+
+![Linear regression standardized coefficients vs XGBoost feature importance for the same five operating-hours features, ranked in different orders](/images/projects/dsac-datathon-2026/hours-model-disagreement.jpg)
+
+<figcaption>Same five features, same target, two models — and two different
+rankings. Linear regression's sign on <code>total_hours_week</code> vs.
+<code>avg_hours_day</code> even points opposite directions, which is what
+told us to flag this rather than report either model's story as
+settled.</figcaption>
+</figure>
+
 **We also mapped it.** Plotting cheesesteak locations colored by rating
 against a Philadelphia housing-affordability map hinted at a
 neighborhood-income relationship worth a follow-up regression — we didn't
 have time to formalize it into the model during the datathon, so it stayed
 a visual observation for the judges rather than a claimed result.
+
+<figure>
+<div class="img-pair">
+<img src="/images/projects/dsac-datathon-2026/locations-by-rating.jpg" alt="Philadelphia-area cheesesteak restaurants plotted by location, colored by star rating">
+<img src="/images/projects/dsac-datathon-2026/affordability-map.jpg" alt="Philadelphia single-family home affordability by household income, by neighborhood">
+</div>
+<figcaption>Restaurant ratings by location (left) against the city's
+income-affordability map (right) — the visual a judge could squint at
+during a 24-hour datathon, not a fitted model.</figcaption>
+</figure>
 
 **The recommendation we actually gave:** there's no shortcut. The
 data says, plainly, that the customer experience *is* the product —

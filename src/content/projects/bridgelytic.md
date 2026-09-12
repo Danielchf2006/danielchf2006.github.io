@@ -13,11 +13,13 @@ metrics:
   - { label: "Signals processed", value: "14" }
   - { label: "Scoring dimensions", value: "6" }
   - { label: "Audit events logged", value: "91" }
-# add public/images/projects/bridgelytic/cover.jpg then uncomment:
-# cover: cover.jpg
+# the deck pages don't survive a 920x520 crop cleanly (both end boxes /
+# the title get cut) — shown uncropped inline in the body instead.
+# cover: pipeline-design.png
 coverAlt: "BridgeLytic Agentic Work OS pipeline diagram"
 links:
   - { label: "Code", href: "https://github.com/Danielchf2006/Agentic-Work-OS-Case-Modeling" }
+  - { label: "Slide deck", href: "https://danielchf2006.github.io/decks/BridgeLytic_Agentic_Work_OS_Exec_Deck.pptx" }
 draft: false
 ---
 
@@ -41,6 +43,15 @@ script:
 ```
 CAPTURE → VERIFY → CLASSIFY → SCORE → ENRICH → RECOMMEND → CONTROL
 ```
+
+<figure>
+
+![The seven-stage BridgeLytic pipeline, from Capture through the mandatory human-approval Control gate, alongside the four real BridgeLytic industries and engagement types it routes signals into](/images/projects/bridgelytic/pipeline-design.png)
+
+<figcaption>From the exec deck: the pipeline as built, and the real
+industry/engagement taxonomy it routes into — swapped in for the case's
+placeholder categories.</figcaption>
+</figure>
 
 - **Capture** loads each signal with its source, date, URL, and raw text —
   no scraping behind auth walls.
@@ -101,6 +112,15 @@ orchestration platform, scored 6.05, correctly routed to
 intelligence, not a direct client lead — flagged for human review, not used
 in scoring") — the kind of nuance a purely automated system would have
 either silently dropped or silently acted on.
+
+<figure>
+
+![The top three ranked opportunities from an actual pipeline run, plus one correctly rejected government grant](/images/projects/bridgelytic/priority-results.png)
+
+<figcaption>Top-ranked output from a real run, plus the one the recipient-type
+check correctly rejected — a federal workforce grant that matched on
+keywords alone.</figcaption>
+</figure>
 
 The deliverables — working prototype, CSV opportunity set, a written
 decision output, the architecture/scoring docs, and a 6-slide exec deck

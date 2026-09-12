@@ -95,16 +95,48 @@ MAE by roughly 30% on both. That gap is the headline finding: for a metric
 that a business will actually read, *how* you handle heterogeneity in the
 target matters more than which single model you pick.
 
+<figure>
+
+![Gain importance by price band — school and neighborhood price level dominate every band](/images/projects/calpriceiq/gain-importance-by-band.png)
+
+<figcaption>Gain importance by band: the $500K–$1M band (the one
+segmentation helped most) leans hardest on <code>neighborhood_price_level</code>
+— the clearest visual case for why one global model was smoothing over real
+band-specific behavior.</figcaption>
+</figure>
+
 **The model was using location inefficiently.** Permutation importance
 ranked `Latitude`/`Longitude` as the top two features by impact — but gain
-importance ranked them low. XGBoost was approximating a smooth spatial
-price surface through many diluted, shallow splits instead of anything
-resembling "similar homes nearby." Three purpose-built spatial features
-fixed that: a 15-nearest-neighbor comp price and dispersion, a ~2km price
-grid (shrunk toward the global mean in sparse cells), and local listing
-density — each computed **train-only**, with leave-one-out logic so a
-training row never sees its own contribution. That recovered another 3–4%
-MAE, concentrated in the `$1M–$2M` band.
+importance ranked them low:
+
+<figure>
+<div class="img-pair">
+<img src="/images/projects/calpriceiq/gain-importance-raw.png" alt="XGBoost gain importance, before the spatial-features fix — Latitude and Longitude rank low">
+<img src="/images/projects/calpriceiq/permutation-importance-raw.png" alt="Permutation importance, before the spatial-features fix — Latitude and Longitude rank first and second">
+</div>
+<figcaption>The same model, two importance metrics, two different stories —
+gain says lat/long barely matter; permutation says they matter most. That
+contradiction is what pointed at the bug.</figcaption>
+</figure>
+
+XGBoost was approximating a smooth spatial price surface through many
+diluted, shallow splits instead of anything resembling "similar homes
+nearby." Three purpose-built spatial features fixed that: a
+15-nearest-neighbor comp price and dispersion, a ~2km price grid (shrunk
+toward the global mean in sparse cells), and local listing density — each
+computed **train-only**, with leave-one-out logic so a training row never
+sees its own contribution. That recovered another 3–4% MAE, concentrated in
+the `$1M–$2M` band.
+
+<figure>
+
+![XGBoost gain importance after adding spatial features — knn_comp_price and grid_price_level now dominate](/images/projects/calpriceiq/gain-importance-spatial.png)
+
+<figcaption>After the fix, <code>knn_comp_price</code> and
+<code>grid_price_level</code> — features built specifically to encode
+"similar homes nearby" — take over the top of the gain-importance ranking
+from the raw coordinates.</figcaption>
+</figure>
 
 **Leakage, confirmed the right way.** Feature-importance analysis flagged
 `ListPrice` as dominating every model that included it. Removing it dropped

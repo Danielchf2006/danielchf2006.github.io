@@ -178,6 +178,33 @@ const coverSrc = data.cover ? `/images/projects/${id}/${data.cover}` : null;
     border-radius: var(--radius);
     margin: var(--space-6) 0;
   }
+  .prose :global(figure) {
+    margin: var(--space-6) 0;
+  }
+  .prose :global(figure img) {
+    margin: 0 0 var(--space-2);
+  }
+  .prose :global(figcaption) {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+  .prose :global(.img-pair) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+    margin: 0 0 var(--space-2);
+  }
+  .prose :global(.img-pair img) {
+    margin: 0;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (max-width: 40rem) {
+    .prose :global(.img-pair) {
+      grid-template-columns: 1fr;
+    }
+  }
   .prose :global(table) {
     width: 100%;
     margin: var(--space-6) 0;

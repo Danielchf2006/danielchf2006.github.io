@@ -13,8 +13,7 @@ metrics:
   - { label: "Taxonomy categories", value: "26" }
   - { label: "Text coverage", value: "100%" }
   - { label: "LOO test contracts", value: "4" }
-# add public/images/projects/zenitera-contracts/cover.jpg then uncomment:
-# cover: cover.jpg
+cover: leave-one-out-precision-recall.png
 coverAlt: "Contract review pipeline — playbook mining and prediction"
 links:
   - { label: "Code (sanitized public copy)", href: "https://github.com/Danielchf2006/contract-review-llm-pipeline" }
@@ -89,6 +88,16 @@ redlined contracts:
 | B (heavily redlined) | 69 | 27.5% | 0.45 | 0.79 |
 | C (lightly redlined) | 69 | 10.1% | 0.23 | 0.43 |
 | D (lightly redlined) | 81 | 9.9% | 0.08 | 0.25 |
+
+<figure>
+
+![Leave-one-out precision and recall for each of the four held-out contracts, generated from the table above](/images/projects/zenitera-contracts/leave-one-out-precision-recall.png)
+
+<figcaption>The same leave-one-out numbers, plotted: precision drops hard
+moving from the heavily-redlined contracts (A, B) to the lightly-redlined
+ones (C, D) — the pattern the Results section below traces to a specific
+cause, not just noise.</figcaption>
+</figure>
 
 ## Results
 
