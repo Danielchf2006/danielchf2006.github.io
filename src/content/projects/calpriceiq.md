@@ -17,6 +17,7 @@ metrics:
 # cover: cover.jpg
 coverAlt: "CalPriceIQ model — predicted vs. actual close price"
 links:
+  - { label: "Live app", href: "https://ca-property-price-modeling-iog.streamlit.app/" }
   - { label: "Code", href: "https://github.com/Danielchf2006/CA-Property-price-modeling" }
 # demoEmbed: "https://public.tableau.com/views/your-viz"
 compare:
@@ -144,10 +145,10 @@ in-sample accuracy but is what makes the model usable on the actual target
 population — off-market properties that never had a list price to begin
 with.
 
-The results feed a small **Streamlit dashboard** (model comparison, feature
-importance, a spatial error map) that reads only precomputed CSVs — it never
-loads XGBoost or retrains on page load, so it stays fast and doesn't need
-the training environment to demo.
+The results feed a small **[Streamlit dashboard](https://ca-property-price-modeling-iog.streamlit.app/)**
+(model comparison, feature importance, a spatial error map) that reads only
+precomputed CSVs — it never loads XGBoost or retrains on page load, so it
+stays fast and doesn't need the training environment to demo.
 
 ## What I'd do next
 
