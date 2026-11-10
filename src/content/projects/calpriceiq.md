@@ -3,9 +3,9 @@ title: CalPriceIQ
 summary: An XGBoost close-price model for 397K+ California MLS listings — segmented by price band, with a spatial-features fix for an inefficient use of lat/long.
 order: 1
 featured: true
-role: Data Science Intern
+role: Data Science Intern / Cohort Leader
 org: IDXExchange
-dates: Jun 2026 – Present
+dates: Jun 2026 – Sep 2026
 location: Boise, ID
 stack: [Python, Pandas, NumPy, scikit-learn, XGBoost, GeoPandas, Streamlit, SQL, Seaborn, Matplotlib]
 metrics:

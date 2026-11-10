@@ -9,7 +9,7 @@ export const site = {
   role: "Data Science & Economics // Northwestern",
   // one or two sentences under the name
   tagline:
-    "Data Science & Economics student at Northwestern. I lead risk modeling for GridGate's queue-projection team, and intern in strategy at Fantuan Delivery and policy-risk analysis at Zenitera Funds. I also built an XGBoost home-price model for IDXExchange.",
+    "Data Science & Economics student at Northwestern (minor in Statistics). I'm a founding product developer on BridgeLytic at Allvue Systems. Before that I co-founded GridGate, led an IDXExchange cohort building an XGBoost home-price model, and interned at Fantuan Delivery and Zenitera Funds.",
   url: "https://danielchf2006.github.io",
   email: "danielcai2029@u.northwestern.edu",
   location: "Evanston, IL",

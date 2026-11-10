@@ -3,14 +3,14 @@ title: Contract Review LLM Pipeline
 summary: Reverse-engineers how human reviewers actually redline contracts into a mined "playbook," then applies it to predict what a reviewer would flag on a new one.
 order: 3
 featured: true
-role: Data Science & Intelligence — Policy Risk Analyst Intern
+role: Data Science & ML Development Intern
 org: Zenitera Funds Co.
-dates: Jun 2026 – Present
+dates: Nov 2025 – Mar 2026
 location: Remote / Shanghai, China
-stack: [Python, python-docx, LLM Classification, Prompt Engineering, JSONL Pipelines, Claude API, Qwen / Kimi]
+stack: [Python, python-docx, LLM Classification, Prompt Engineering, JSONL Pipelines, Claude API, Qwen]
 metrics:
   - { label: "Contract types", value: "14" }
-  - { label: "Taxonomy categories", value: "26" }
+  - { label: "Taxonomy categories", value: "28" }
   - { label: "Text coverage", value: "100%" }
   - { label: "LOO test contracts", value: "4" }
 cover: leave-one-out-precision-recall.png
@@ -44,10 +44,10 @@ Chinese-language contracts, structured to be adaptable to others.
 ### Stage 1 — classification against a real taxonomy
 
 Every contract gets classified into one of **14 contract types**, and every
-clause block gets tagged against a **26-category taxonomy** — a
-government-recommended tier (single-label) plus a company-specific tier
+clause block gets tagged against a **28-category taxonomy** — a
+17-category regulatory tier (single-label) plus an 11-category company-specific tier
 (multi-label, tuned to Zenitera's own review priorities). I reverse-engineered
-that 26-category structure by mining clause-label patterns out of legacy
+that 28-category structure by mining clause-label patterns out of legacy
 reviewer annotations rather than designing it from scratch, so it reflects
 how the team already thinks about risk. Classification runs through two
 interchangeable LLM backends (an OpenAI-compatible gateway to a Qwen-class

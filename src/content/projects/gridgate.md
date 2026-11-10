@@ -3,9 +3,9 @@ title: GridGate Interconnection Risk & Regulatory Intelligence
 summary: Predicting which renewable-energy projects drop out of the interconnection queue, projecting their upgrade costs, and scraping the regulatory landscape that drives both.
 order: 2
 featured: true
-role: Lead Data Scientist — De-Risking & Queue Projection Team
-org: GridGate
-dates: Jan 2026 – Jul 2026
+role: Co-Founder, Lead Data Scientist — De-Risking & Queue Projection Team
+org: GridGate LLC
+dates: Jan 2026 – Jun 2026
 location: Evanston, IL
 stack: [Python, scikit-learn, SQL, SQLite, Logistic Regression, Random Forest, Linear Regression, Web Scraping, LLM Summarization]
 metrics:

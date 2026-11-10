@@ -4,7 +4,7 @@ summary: A 72-hour case study — a deterministic 7-stage pipeline that turns pu
 order: 4
 featured: true
 role: Independent Case Study (72-Hour Build)
-org: BridgeLytic Capital
+org: BridgeLytic (Allvue Systems)
 dates: Aug 2026
 location: Remote
 stack: [Python, Claude API, Deterministic Pipelines, Data Modeling, pptxgenjs]
@@ -26,7 +26,7 @@ draft: false
 ## Problem
 
 A 72-hour take-home case: design and prototype an "agentic work OS" for
-BridgeLytic Capital — a system that watches public signals (press releases,
+BridgeLytic Capital (part of Allvue Systems) — a system that watches public signals (press releases,
 job postings, grant listings) for opportunities that match BridgeLytic's
 actual business, and turns them into a ranked queue a human can act on. The
 brief specified 7 pipeline stages and a placeholder venture taxonomy; I

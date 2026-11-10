@@ -1,18 +1,17 @@
 ---
-org: GridGate
-role: Lead Data Scientist — De-Risking & Queue Projection Team
+org: GridGate LLC
+role: Co-Founder, Lead Data Scientist — De-Risking & Queue Projection Team
 location: Evanston, IL
 start: "2026-01"
-end: "2026-07"
-dates: Jan 2026 – Jul 2026
-order: 1
-tags: [Logistic Regression, Random Forests, Web Scraping, Risk Scoring]
+end: "2026-06"
+dates: Jan 2026 – Jun 2026
+order: 2
+tags: [Logistic Regression, Random Forests, Web Scraping, Sentiment Analysis, Cost Projection]
 highlights:
-  - Flagged at-risk interconnection-queue withdrawals (AUC up to 0.84) with logistic regression and random forest models.
-  - Built web scrapers for policy-related articles and ran sentiment analysis to surface signals around policy changes.
+  - Flagged at-risk interconnection-queue withdrawals (AUC up to 0.84) by developing logistic regression and random forest models.
+  - Built web scrapers to continuously monitor 1,000+ policy-related sites, running sentiment analysis on 500+ articles to surface early signals on interconnection-relevant policy shifts that fed into the team's risk-scoring framework.
   - Engineered operational risk features (queue congestion, stage-timing patterns, MW revisions) to improve dropout separability.
-  - Contributed to a probabilistic risk-scoring framework helping renewable-energy developers prioritize projects.
-  - Built cost-projection models forecasting interconnection costs, enabling ~$500k savings per project.
+  - Built cost-projection models to forecast interconnection costs, projecting ~$500K savings per project.
 ---
 
 The risk modeling, cost/timeline projection, and regulatory-scraper work
